@@ -25,4 +25,13 @@
   min-width: 3em;
   fill: #222; }
 
+.fl-pw_WidgetContainer-info {
+  padding: 5px;
+  width: 100%;
+  display: inline-block; }
+  .fl-pw_WidgetContainer-info--success {
+    color: #42b382; }
+  .fl-pw_WidgetContainer-info--error {
+    color: #e4585b; }
+
 /*# sourceMappingURL=fl-playlist-widget.css.map */

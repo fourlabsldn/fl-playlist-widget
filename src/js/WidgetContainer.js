@@ -5,16 +5,16 @@ export default class WidgetContainer extends ViewController {
 
   constructor(modulePrefix) {
     super(modulePrefix);
-    this.errorTimeout = null;
+    this.infoTimeout = null;
     Object.preventExtensions(this);
   }
 
   buildHtml() {
     super.buildHtml();
-    const errorContainer = document.createElement('span');
-    this.html.errorContainer = errorContainer;
-    errorContainer.classList.add(`${this.cssPrefix}-errorContainer`);
-    this.html.container.appendChild(errorContainer);
+    const info = document.createElement('span');
+    this.html.info = info;
+    info.classList.add(`${this.cssPrefix}-info`);
+    this.html.container.appendChild(info);
 
     const loadingIndicator = document.createElement('span');
     this.html.loadingIndicator = loadingIndicator;
@@ -46,14 +46,25 @@ export default class WidgetContainer extends ViewController {
 
   /**
    * Displays a message for a certain period of time
-   * @method displayError
+   * @method displayInfo
    * @param  {String} message
    * @return {void}
    */
-  displayError(message) {
-    this.html.errorContainer.innerHTML = message;
+  displayInfo(message, error = false) {
+    const errorClass = `${this.cssPrefix}-info--error`;
+    const successClass = `${this.cssPrefix}-info--success`;
+    this.html.info.classList.remove(errorClass, successClass);
+    this.html.info.innerHTML = message;
+    if (error) {
+      this.html.info.classList.add(errorClass);
+    } else {
+      this.html.info.classList.add(successClass);
+    }
     this.errorTimeout = setTimeout(
-      () => { this.html.errorContainer.innerHTML = ''; },
+      () => {
+        this.html.info.classList.remove(errorClass, successClass);
+        this.html.info.innerHTML = '';
+      },
       2000
     );
   }

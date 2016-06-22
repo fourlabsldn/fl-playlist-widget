@@ -1838,7 +1838,7 @@ var SubmissionBox = function (_ViewController) {
   }, {
     key: 'getInput',
     value: function getInput() {
-      return this.html.textInput.value;
+      return this.html.textInput.value.trim();
     }
 
     /**
@@ -1866,7 +1866,7 @@ var WidgetContainer = function (_ViewController) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(WidgetContainer).call(this, modulePrefix));
 
-    _this.errorTimeout = null;
+    _this.infoTimeout = null;
     Object.preventExtensions(_this);
     return _this;
   }
@@ -1875,10 +1875,10 @@ var WidgetContainer = function (_ViewController) {
     key: 'buildHtml',
     value: function buildHtml() {
       _get(Object.getPrototypeOf(WidgetContainer.prototype), 'buildHtml', this).call(this);
-      var errorContainer = document.createElement('span');
-      this.html.errorContainer = errorContainer;
-      errorContainer.classList.add(this.cssPrefix + '-errorContainer');
-      this.html.container.appendChild(errorContainer);
+      var info = document.createElement('span');
+      this.html.info = info;
+      info.classList.add(this.cssPrefix + '-info');
+      this.html.container.appendChild(info);
 
       var loadingIndicator = document.createElement('span');
       this.html.loadingIndicator = loadingIndicator;
@@ -1913,19 +1913,30 @@ var WidgetContainer = function (_ViewController) {
 
     /**
      * Displays a message for a certain period of time
-     * @method displayError
+     * @method displayInfo
      * @param  {String} message
      * @return {void}
      */
 
   }, {
-    key: 'displayError',
-    value: function displayError(message) {
+    key: 'displayInfo',
+    value: function displayInfo(message) {
       var _this2 = this;
 
-      this.html.errorContainer.innerHTML = message;
+      var error = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+
+      var errorClass = this.cssPrefix + '-info--error';
+      var successClass = this.cssPrefix + '-info--success';
+      this.html.info.classList.remove(errorClass, successClass);
+      this.html.info.innerHTML = message;
+      if (error) {
+        this.html.info.classList.add(errorClass);
+      } else {
+        this.html.info.classList.add(successClass);
+      }
       this.errorTimeout = setTimeout(function () {
-        _this2.html.errorContainer.innerHTML = '';
+        _this2.html.info.classList.remove(errorClass, successClass);
+        _this2.html.info.innerHTML = '';
       }, 2000);
     }
   }]);
@@ -1935,6 +1946,8 @@ var WidgetContainer = function (_ViewController) {
 
 var ModuleCoordinator = function () {
   function ModuleCoordinator(modulePrefix) {
+    var _this = this;
+
     _classCallCheck(this, ModuleCoordinator);
 
     this.submissionBox = new SubmissionBox(modulePrefix);
@@ -1942,6 +1955,9 @@ var ModuleCoordinator = function () {
     Object.preventExtensions(this);
 
     this.widgetContainer.set('submissionBox', this.submissionBox);
+    this.submissionBox.on('submit', function () {
+      return _this.submitTrack();
+    });
   }
 
   /**
@@ -1956,9 +1972,11 @@ var ModuleCoordinator = function () {
     value: function submitTrack() {
       var trackUri = this.submissionBox.getInput();
       if (this.isValid(trackUri)) {
-        console.log('valid track', trackUri);
+        this.widgetContainer.displayInfo('Valid track');
+        console.log('valid');
       } else {
-        console.log('invalid track', trackUri);
+        this.widgetContainer.displayInfo('Invalid track', true);
+        console.log('invalid');
       }
     }
 

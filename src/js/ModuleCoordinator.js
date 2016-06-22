@@ -8,6 +8,7 @@ export default class ModuleCoordinator {
     Object.preventExtensions(this);
 
     this.widgetContainer.set('submissionBox', this.submissionBox);
+    this.submissionBox.on('submit', () => this.submitTrack());
   }
 
   /**
@@ -18,9 +19,11 @@ export default class ModuleCoordinator {
   submitTrack() {
     const trackUri = this.submissionBox.getInput();
     if (this.isValid(trackUri)) {
-      console.log('valid track', trackUri);
+      this.widgetContainer.displayInfo('Valid track');
+      console.log('valid');
     } else {
-      console.log('invalid track', trackUri);
+      this.widgetContainer.displayInfo('Invalid track', true);
+      console.log('invalid');
     }
   }
 

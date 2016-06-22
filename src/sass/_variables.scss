@@ -1,0 +1,17 @@
+// Colors
+$c-text: #303030;
+$c-plain-background: #f9f9f9;
+
+$c-button-background: darken($c-plain-background, 10%) ;
+$c-button-text: $c-text;
+
+$c-border: darken($c-plain-background, 10.9804);
+
+$c-danger: #e4585b;
+$c-busy-text: $c-plain-background;
+
+$c-ok: #42b382;
+$c-free-text:$c-plain-background;
+
+$c-warning: #fcb827;
+$c-half-busy-text: $c-plain-background;

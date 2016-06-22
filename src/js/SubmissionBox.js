@@ -66,7 +66,7 @@ export default class SubmissionBox extends ViewController {
    * @return {String}
    */
   getInput() {
-    return this.html.textInput.value;
+    return this.html.textInput.value.trim();
   }
 
   /**

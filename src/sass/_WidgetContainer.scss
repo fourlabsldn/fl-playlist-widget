@@ -1,0 +1,16 @@
+.fl-pw_WidgetContainer {
+
+}
+
+.fl-pw_WidgetContainer-info {
+  padding: 5px;
+  width: 100%;
+  display: inline-block;
+  &--success {
+    color: $c-ok;
+  }
+
+  &--error {
+    color: $c-danger;
+  }
+}
