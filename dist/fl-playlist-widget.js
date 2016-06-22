@@ -1794,6 +1794,138 @@ var ViewController = function () {
   return ViewController;
 }();
 
+var TrackList = function (_ViewController) {
+  _inherits(TrackList, _ViewController);
+
+  function TrackList(modulePrefix) {
+    _classCallCheck(this, TrackList);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TrackList).call(this, modulePrefix));
+
+    _this.tracks = [{
+      "album": {
+        "album_type": "album",
+        "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/0TN9abNwnSnMW3jxw6uIeL"
+        },
+        "href": "https://api.spotify.com/v1/albums/0TN9abNwnSnMW3jxw6uIeL",
+        "id": "0TN9abNwnSnMW3jxw6uIeL",
+        "images": [{
+          "height": 640,
+          "url": "https://i.scdn.co/image/da88959a881cdc64bd576383c755fec0af2ca5f5",
+          "width": 640
+        }, {
+          "height": 300,
+          "url": "https://i.scdn.co/image/6d2190a9b3f711b57e6ee924fa343239a36752df",
+          "width": 300
+        }, {
+          "height": 64,
+          "url": "https://i.scdn.co/image/66f1b8e6703f912ffd76947ab8ab428a87e44ed0",
+          "width": 64
+        }],
+        "name": "Total Life Forever",
+        "type": "album",
+        "uri": "spotify:album:0TN9abNwnSnMW3jxw6uIeL"
+      },
+      "artists": [{
+        "external_urls": {
+          "spotify": "https://open.spotify.com/artist/6FQqZYVfTNQ1pCqfkwVFEa"
+        },
+        "href": "https://api.spotify.com/v1/artists/6FQqZYVfTNQ1pCqfkwVFEa",
+        "id": "6FQqZYVfTNQ1pCqfkwVFEa",
+        "name": "Foals",
+        "type": "artist",
+        "uri": "spotify:artist:6FQqZYVfTNQ1pCqfkwVFEa"
+      }],
+      "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"],
+      "disc_number": 1,
+      "duration_ms": 409560,
+      "explicit": false,
+      "external_ids": {
+        "isrc": "GBAHT1000047"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/4i3txPQIUV4eC9g9FBpi9I"
+      },
+      "href": "https://api.spotify.com/v1/tracks/4i3txPQIUV4eC9g9FBpi9I",
+      "id": "4i3txPQIUV4eC9g9FBpi9I",
+      "name": "Spanish Sahara",
+      "popularity": 60,
+      "preview_url": "https://p.scdn.co/mp3-preview/75d32af506df2354251f80726ab3e0656fa8e8f7",
+      "track_number": 5,
+      "type": "track",
+      "uri": "spotify:track:4i3txPQIUV4eC9g9FBpi9I"
+    }];
+
+    _this.setTracks(_this.tracks);
+    return _this;
+  }
+
+  _createClass(TrackList, [{
+    key: 'buildHtml',
+    value: function buildHtml() {
+      _get(Object.getPrototypeOf(TrackList.prototype), 'buildHtml', this).call(this);
+    }
+  }, {
+    key: 'getTracks',
+    value: function getTracks() {}
+  }, {
+    key: 'setTracks',
+    value: function setTracks(tracks) {
+      var _this2 = this;
+
+      this.html.container.innerHTML = '';
+      assert(Array.isArray(tracks), 'Invalid tracks object. Not an array: "' + tracks + '"');
+      tracks.forEach(function (track) {
+        var trackEl = _this2.createTrackEl(track);
+        _this2.html.container.appendChild(trackEl);
+      });
+      this.tracks = tracks;
+    }
+
+    /**
+     * @method createTrackEl
+     * @param  {Object} track
+     * @return {HTMLElement}
+     */
+
+  }, {
+    key: 'createTrackEl',
+    value: function createTrackEl(track) {
+      var trackClass = this.cssPrefix + '-track';
+      var trackEl = document.createElement('div');
+      trackEl.classList.add(trackClass);
+
+      var coverImg = document.createElement('img');
+      coverImg.classList.add(trackClass + '-cover');
+      coverImg.setAttribute('src', track.album.images[1].url);
+      trackEl.appendChild(coverImg);
+
+      var title = document.createElement('span');
+      title.classList.add(trackClass + '-title');
+      title.innerHTML = track.name;
+      trackEl.appendChild(title);
+
+      var artist = document.createElement('span');
+      artist.classList.add(trackClass + '-artist');
+      artist.innerHTML = track.artists[0].name;
+      trackEl.appendChild(artist);
+
+      if (track.explicit) {
+        var explicit = document.createElement('span');
+        explicit.classList.add(trackClass + '-explicit');
+        explicit.innerHTML = 'explicit';
+        trackEl.appendChild(explicit);
+      }
+
+      return trackEl;
+    }
+  }]);
+
+  return TrackList;
+}(ViewController);
+
 var SubmissionBox = function (_ViewController) {
   _inherits(SubmissionBox, _ViewController);
 
@@ -1889,10 +2021,10 @@ var WidgetContainer = function (_ViewController) {
       this.html.submissionBox = submissionBox;
       this.html.container.appendChild(submissionBox);
 
-      var resultsBox = document.createElement('div');
-      this.html.resultsBox = resultsBox;
-      resultsBox.classList.add(this.cssPrefix + '-resultsBox');
-      this.html.container.appendChild(resultsBox);
+      var trackList = document.createElement('div');
+      this.html.trackList = trackList;
+      trackList.classList.add(this.cssPrefix + '-trackList');
+      this.html.container.appendChild(trackList);
     }
 
     /**
@@ -1952,9 +2084,11 @@ var ModuleCoordinator = function () {
 
     this.submissionBox = new SubmissionBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
+    this.trackList = new TrackList(modulePrefix);
     Object.preventExtensions(this);
 
     this.widgetContainer.set('submissionBox', this.submissionBox);
+    this.widgetContainer.set('trackList', this.trackList);
     this.submissionBox.on('submit', function () {
       return _this.submitTrack();
     });
@@ -1990,8 +2124,9 @@ var ModuleCoordinator = function () {
   }, {
     key: 'isValid',
     value: function isValid(trackUri) {
-      var validationRegex = /^https:\/\/open.spotify.com\/track\/\w{22}$/;
-      return validationRegex.test(trackUri);
+      var linkValidation = /^https:\/\/open.spotify.com\/track\/\w{22}$/;
+      var uriValidation = /^spotify:track:\w{22}$/;
+      return linkValidation.test(trackUri) || uriValidation.test(trackUri);
     }
 
     /**

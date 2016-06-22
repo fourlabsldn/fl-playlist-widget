@@ -1,3 +1,4 @@
+import TrackList from './TrackList'; 
 import SubmissionBox from './SubmissionBox';
 import WidgetContainer from './WidgetContainer';
 
@@ -5,9 +6,11 @@ export default class ModuleCoordinator {
   constructor(modulePrefix) {
     this.submissionBox = new SubmissionBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
+    this.trackList = new TrackList(modulePrefix);
     Object.preventExtensions(this);
 
     this.widgetContainer.set('submissionBox', this.submissionBox);
+    this.widgetContainer.set('trackList', this.trackList);
     this.submissionBox.on('submit', () => this.submitTrack());
   }
 
@@ -34,8 +37,9 @@ export default class ModuleCoordinator {
    * @return {Boolean}
    */
   isValid(trackUri) {
-    const validationRegex = /^https:\/\/open.spotify.com\/track\/\w{22}$/;
-    return validationRegex.test(trackUri);
+    const linkValidation = /^https:\/\/open.spotify.com\/track\/\w{22}$/;
+    const uriValidation = /^spotify:track:\w{22}$/;
+    return linkValidation.test(trackUri) || uriValidation.test(trackUri);
   }
 
   /**

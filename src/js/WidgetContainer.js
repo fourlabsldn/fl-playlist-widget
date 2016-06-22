@@ -25,10 +25,10 @@ export default class WidgetContainer extends ViewController {
     this.html.submissionBox = submissionBox;
     this.html.container.appendChild(submissionBox);
 
-    const resultsBox = document.createElement('div');
-    this.html.resultsBox = resultsBox;
-    resultsBox.classList.add(`${this.cssPrefix}-resultsBox`);
-    this.html.container.appendChild(resultsBox);
+    const trackList = document.createElement('div');
+    this.html.trackList = trackList;
+    trackList.classList.add(`${this.cssPrefix}-trackList`);
+    this.html.container.appendChild(trackList);
   }
 
   /**
