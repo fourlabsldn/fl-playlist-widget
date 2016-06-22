@@ -1,0 +1,1 @@
+{"version":3,"names":[],"mappings":"","sources":["main.js"],"sourcesContent":["/* globals xController */\nxController((xdiv) => {\n  console.log(xdiv);\n});\n"],"file":"fl-playlist-widget.js","sourceRoot":"/source/"}
