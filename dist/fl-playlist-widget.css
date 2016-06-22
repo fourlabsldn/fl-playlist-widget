@@ -1,2 +1,28 @@
+.fl-pw_SubmissionBox {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch; }
+
+.fl-pw_SubmissionBox-textInput {
+  -webkit-box-flex: 4;
+  -webkit-flex: 4 4;
+      -ms-flex: 4 4;
+          flex: 4 4; }
+
+.fl-pw_SubmissionBox-submitBtn {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 4;
+      -ms-flex: 1 4;
+          flex: 1 4;
+  min-width: 3em;
+  fill: #222; }
 
 /*# sourceMappingURL=fl-playlist-widget.css.map */

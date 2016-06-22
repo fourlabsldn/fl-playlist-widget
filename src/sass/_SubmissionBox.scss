@@ -1,0 +1,15 @@
+.fl-pw_SubmissionBox {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: stretch;
+}
+
+.fl-pw_SubmissionBox-textInput {
+  flex: 4 4;
+}
+
+.fl-pw_SubmissionBox-submitBtn {
+  flex: 1 4;
+  min-width: 3em;
+  fill: #222;
+}
