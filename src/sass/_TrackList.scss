@@ -1,0 +1,52 @@
+.fl-pw_TrackList {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.fl-pw_TrackList-track {
+  display: flex;
+  flex-flow: row nowrap;
+  padding: .3em 1em;
+  border: 1px solid $c-border;
+  border-radius: 5px;
+  margin-top: .5em;
+}
+
+.fl-pw_TrackList-track-cover {
+  width: 5em;
+  height: 5em;
+}
+
+.fl-pw_TrackList-track-info {
+  display: flex;
+  flex-flow: column nowrap;
+  padding-left: 1em;
+}
+
+.fl-pw_TrackList-track-info-title,
+.fl-pw_TrackList-track-info-artist,
+.fl-pw_TrackList-track-info-explicit {
+  display: block;
+  margin: .05em 0;
+}
+
+.fl-pw_TrackList-track-info-title {
+  font-weight: bold;
+}
+
+.fl-pw_TrackList-track-info-artist {
+  opacity: .7;
+}
+
+.fl-pw_TrackList-track-info-explicit {
+  display: inline-block;
+  padding: 0 .2em .2em;
+  margin: .2em 0;
+  width: 6em;
+  border-radius: 3px;
+
+  background-color: $c-danger;
+  color: $c-danger-text;
+  font-size: .8em;
+  text-align: center;
+}

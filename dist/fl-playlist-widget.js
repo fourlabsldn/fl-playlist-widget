@@ -1841,7 +1841,7 @@ var TrackList = function (_ViewController) {
       "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"],
       "disc_number": 1,
       "duration_ms": 409560,
-      "explicit": false,
+      "explicit": true,
       "external_ids": {
         "isrc": "GBAHT1000047"
       },
@@ -1902,21 +1902,26 @@ var TrackList = function (_ViewController) {
       coverImg.setAttribute('src', track.album.images[1].url);
       trackEl.appendChild(coverImg);
 
+      var trackInfoClass = trackClass + '-info';
+      var trackInfo = document.createElement('div');
+      trackInfo.classList.add(trackInfoClass);
+      trackEl.appendChild(trackInfo);
+
       var title = document.createElement('span');
-      title.classList.add(trackClass + '-title');
+      title.classList.add(trackInfoClass + '-title');
       title.innerHTML = track.name;
-      trackEl.appendChild(title);
+      trackInfo.appendChild(title);
 
       var artist = document.createElement('span');
-      artist.classList.add(trackClass + '-artist');
+      artist.classList.add(trackInfoClass + '-artist');
       artist.innerHTML = track.artists[0].name;
-      trackEl.appendChild(artist);
+      trackInfo.appendChild(artist);
 
       if (track.explicit) {
         var explicit = document.createElement('span');
-        explicit.classList.add(trackClass + '-explicit');
+        explicit.classList.add(trackInfoClass + '-explicit');
         explicit.innerHTML = 'explicit';
-        trackEl.appendChild(explicit);
+        trackInfo.appendChild(explicit);
       }
 
       return trackEl;

@@ -34,4 +34,65 @@
   .fl-pw_WidgetContainer-info--error {
     color: #e4585b; }
 
+.fl-pw_TrackList {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: column nowrap;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap; }
+
+.fl-pw_TrackList-track {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row nowrap;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  padding: .3em 1em;
+  border: 1px solid #dddddd;
+  -webkit-border-radius: 5px;
+          border-radius: 5px;
+  margin-top: .5em; }
+
+.fl-pw_TrackList-track-cover {
+  width: 5em;
+  height: 5em; }
+
+.fl-pw_TrackList-track-info {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: column nowrap;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
+  padding-left: 1em; }
+
+.fl-pw_TrackList-track-info-title,
+.fl-pw_TrackList-track-info-artist,
+.fl-pw_TrackList-track-info-explicit {
+  display: block;
+  margin: .05em 0; }
+
+.fl-pw_TrackList-track-info-title {
+  font-weight: bold; }
+
+.fl-pw_TrackList-track-info-artist {
+  opacity: .7; }
+
+.fl-pw_TrackList-track-info-explicit {
+  display: inline-block;
+  padding: 0 .2em .2em;
+  margin: .2em 0;
+  width: 6em;
+  -webkit-border-radius: 3px;
+          border-radius: 3px;
+  background-color: #e4585b;
+  color: #f9f9f9;
+  font-size: .8em;
+  text-align: center; }
+
 /*# sourceMappingURL=fl-playlist-widget.css.map */
