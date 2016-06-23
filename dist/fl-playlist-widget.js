@@ -3824,14 +3824,15 @@ var SearchResults = function (_ViewController) {
 
       assert(Array.isArray(resultsInfo), 'Results is not an array: ' + resultsInfo);
       this.clearResults();
-      if (resultsInfo.length === 0) {
-        this.html.container.innerHTML = 'No results found.';
-        return;
-      }
-      resultsInfo.forEach(function (info) {
-        return _this2.addResult(info);
-      });
       this.setVisible(true);
+
+      if (resultsInfo.length === 0) {
+        this.addResult({ text: 'No results found.' });
+      } else {
+        resultsInfo.forEach(function (info) {
+          return _this2.addResult(info);
+        });
+      }
     }
 
     /**
@@ -3848,24 +3849,39 @@ var SearchResults = function (_ViewController) {
       var result = document.createElement('div');
       result.classList.add(this.cssPrefix + '-result');
 
-      var cover = document.createElement('img');
-      cover.setAttribute('src', info.album.images[1].url);
-      cover.classList.add(this.cssPrefix + '-cover');
-      result.appendChild(cover);
+      if (info.album && info.album.images && info.album.images[1]) {
+        var cover = document.createElement('img');
+        cover.setAttribute('src', info.album.images[1].url);
+        cover.classList.add(this.cssPrefix + '-cover');
+        result.appendChild(cover);
+      }
 
-      var title = document.createElement('span');
-      title.classList.add(this.cssPrefix + '-title');
-      title.innerHTML = info.name;
-      result.appendChild(title);
+      if (info.name) {
+        var title = document.createElement('span');
+        title.classList.add(this.cssPrefix + '-title');
+        title.innerHTML = info.name;
+        result.appendChild(title);
+      }
 
-      var artist = document.createElement('span');
-      artist.classList.add(this.cssPrefix + '-artist');
-      artist.innerHTML = info.artists[0] ? info.artists[0].name : 'Unknown artist';
-      result.appendChild(artist);
+      if (Array.isArray(info.artists)) {
+        var artist = document.createElement('span');
+        artist.classList.add(this.cssPrefix + '-artist');
+        artist.innerHTML = info.artists[0] ? info.artists[0].name : 'Unknown artist';
+        result.appendChild(artist);
+      }
 
-      result.addEventListener('click', function () {
-        return _this3.trigger('resultClick', info.id);
-      });
+      if (info.text) {
+        var text = document.createElement('span');
+        text.classList.add(this.cssPrefix + '-text');
+        text.innerHTML = info.text;
+        result.appendChild(text);
+      }
+
+      if (info.id) {
+        result.addEventListener('click', function () {
+          return _this3.trigger('resultClick', info.id);
+        });
+      }
       this.html.container.appendChild(result);
     }
 
