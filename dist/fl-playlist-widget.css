@@ -144,6 +144,7 @@
   top: 0;
   z-index: 1;
   min-height: 4em;
+  padding: 1em 0;
   -webkit-border-radius: 0 0 2px 2px;
           border-radius: 0 0 2px 2px;
   -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
@@ -155,5 +156,38 @@
   .fl-pw_SearchResults--visible {
     visibility: visible;
     opacity: 1; }
+
+.fl-pw_SearchResults-cover,
+.fl-pw_SearchResults-title,
+.fl-pw_SearchResults-artist {
+  display: inline; }
+
+.fl-pw_SearchResults-result {
+  display: block;
+  cursor: pointer;
+  background-color: inherit;
+  padding: .2em 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+  .fl-pw_SearchResults-result:hover {
+    -webkit-filter: brightness(95%);
+            filter: brightness(95%); }
+  .fl-pw_SearchResults-result:active {
+    -webkit-filter: brightness(90%);
+            filter: brightness(90%); }
+
+.fl-pw_SearchResults-cover {
+  width: 2em;
+  height: 2em;
+  margin-right: 1em; }
+
+.fl-pw_SearchResults-title {
+  font-weight: bold; }
+
+.fl-pw_SearchResults-artist {
+  color: #4a4a4a; }
+  .fl-pw_SearchResults-artist::before {
+    content: ' - '; }
 
 /*# sourceMappingURL=fl-playlist-widget.css.map */

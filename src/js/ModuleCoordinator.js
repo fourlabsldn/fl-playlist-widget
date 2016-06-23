@@ -4,7 +4,7 @@ import SubmissionBox from './SubmissionBox';
 import WidgetContainer from './WidgetContainer';
 import Ajax from './utils/Ajax';
 import assert from 'fl-assert';
-import throttle from './utils/throttle';
+import debounce from './utils/debounce';
 import demoData from './utils/demoData';
 
 
@@ -23,7 +23,7 @@ export default class ModuleCoordinator {
     this.widgetContainer.set('searchResults', this.searchResults);
     // this.submissionBox.on('submit', () => this.submitTrack());
 
-    this.submissionBox.on('usertyping', throttle(500, async () => {
+    this.submissionBox.on('usertyping', debounce(200, async () => {
       const searchString = this.submissionBox.getInput();
       const tracksFound = await this.searchTrack(searchString);
       if (tracksFound) {
