@@ -3,7 +3,6 @@ import Track from './Track';
 import assert from 'fl-assert';
 import trackReorderDrag from './utils/trackReorderDrag';
 import removeIndex from './utils/removeIndex';
-import demoData from './utils/demoData';
 
 export default class TrackList extends ViewController {
   constructor(modulePrefix) {
@@ -13,7 +12,6 @@ export default class TrackList extends ViewController {
     Object.preventExtensions(this);
 
     this.acceptEvents('change');
-    this.setTracks(demoData);
   }
 
   buildHtml() {

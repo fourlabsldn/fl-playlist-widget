@@ -6,7 +6,7 @@ export default class SubmissionBox extends ViewController {
   constructor(modulePrefix) {
     super(modulePrefix);
     this.highlightTimeout = null;
-    this.acceptEvents('submit');
+    this.acceptEvents('submit', 'usertyping');
   }
 
   buildHtml() {
@@ -18,7 +18,7 @@ export default class SubmissionBox extends ViewController {
     submitBtn.classList.add(`${this.cssPrefix}-submitBtn`, 'btn', 'btn-default');
     this.html.container.appendChild(submitBtn);
     submitBtn.addEventListener('click', () => {
-      this.trigger('submit');
+      this.trigger('submit', 'usertyping');
     });
 
     const textInput = document.createElement('input');
@@ -31,6 +31,8 @@ export default class SubmissionBox extends ViewController {
       const keyPressedCode = e.keyCode ? e.keyCode : e.which;
       if (keyPressedCode === enterKeyCode) {
         this.trigger('submit');
+      } else {
+        this.trigger('usertyping');
       }
     });
   }

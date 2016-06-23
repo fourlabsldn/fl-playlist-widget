@@ -1,0 +1,16 @@
+.fl-pw_SearchResults {
+  width: 100%;
+  background-color: $c-plain-background;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  min-height: 4em;
+
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 4px 4px rgba(0,0,0,.3);
+  @include fade-hidden();
+
+  &--visible {
+    @include fade-visible();
+  }
+}

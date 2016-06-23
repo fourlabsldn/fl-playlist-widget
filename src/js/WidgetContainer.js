@@ -35,10 +35,10 @@ export default class WidgetContainer extends ViewController {
     trackList.classList.add(`${this.cssPrefix}-trackList`);
     tracksContainer.appendChild(trackList);
 
-    const resultsList = document.createElement('div');
-    this.html.resultsList = resultsList;
-    resultsList.classList.add(`${this.cssPrefix}-resultsList`);
-    tracksContainer.appendChild(resultsList);
+    const searchResults = document.createElement('div');
+    this.html.searchResults = searchResults;
+    searchResults.classList.add(`${this.cssPrefix}-searchResults`);
+    tracksContainer.appendChild(searchResults);
   }
 
   /**
