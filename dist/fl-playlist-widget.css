@@ -114,7 +114,8 @@
   margin-left: auto; }
 
 .fl-pw_Track-btns-drag,
-.fl-pw_Track-btns-delete {
+.fl-pw_Track-btns-delete,
+.fl-pw_Track-btns-playingSign {
   display: block;
   width: 2.1em;
   height: 2.1em;
@@ -126,7 +127,8 @@
   fill: #303030;
   margin-bottom: .5em; }
   .fl-pw_Track-btns-drag:active,
-  .fl-pw_Track-btns-delete:active {
+  .fl-pw_Track-btns-delete:active,
+  .fl-pw_Track-btns-playingSign:active {
     background-color: #cecece; }
 
 .fl-pw_Track-btns-drag {

@@ -21,7 +21,7 @@ export default class Track extends ViewController {
     coverImg.setAttribute('src', info.album.images[1].url);
     this.html.container.appendChild(coverImg);
 
-    const linearGradients = 'linear-gradient(45deg, rgb(255, 255, 255) 0%, rgba(255, 255, 255, .94) 50%, rgba(255, 255, 255, 0.8) 100%)';
+    const linearGradients = 'linear-gradient(45deg, rgb(255, 255, 255) 0%, rgba(255, 255, 255, .94) 50%, rgba(255, 255, 255, 0.8) 100%)'; // eslint-disable-line max-len
     this.html.container.style.background = `url("${info.album.images[1].url}"), ${linearGradients}`;
 
     const trackInfoClass = `${this.cssPrefix}-info`;
@@ -51,33 +51,40 @@ export default class Track extends ViewController {
     buttonsBar.classList.add(buttonsBarClass);
     this.html.container.appendChild(buttonsBar);
 
-    const dragBtn = document.createElement('button');
-    dragBtn.innerHTML = constants.dragIcon;
-    dragBtn.setAttribute('draggable', 'true');
-    dragBtn.classList.add(`${buttonsBarClass}-drag`);
-    this.html.container.dragBtn = dragBtn;
-    buttonsBar.appendChild(dragBtn);
+    if (info.playing) {
+      const playingSign = document.createElement('button');
+      playingSign.classList.add(`${buttonsBarClass}-playingSign`);
+      this.playingSign = playingSign;
+      playingSign.innerHTML = constants.playIcon;
+      buttonsBar.appendChild(playingSign);
+    } else {
+      const dragBtn = document.createElement('button');
+      dragBtn.innerHTML = constants.dragIcon;
+      dragBtn.setAttribute('draggable', 'true');
+      dragBtn.classList.add(`${buttonsBarClass}-drag`);
+      this.html.container.dragBtn = dragBtn;
+      buttonsBar.appendChild(dragBtn);
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.classList.add(`${buttonsBarClass}-delete`);
-    this.deleteBtn = deleteBtn;
-    deleteBtn.innerHTML = constants.trashIcon;
-    buttonsBar.appendChild(deleteBtn);
+      const deleteBtn = document.createElement('button');
+      deleteBtn.classList.add(`${buttonsBarClass}-delete`);
+      this.deleteBtn = deleteBtn;
+      deleteBtn.innerHTML = constants.trashIcon;
+      buttonsBar.appendChild(deleteBtn);
 
-    // Set listeners
+      // Set listeners
+      const draggingClass = `${this.cssPrefix}--dragging`;
+      dragBtn.addEventListener('dragstart', (e) => {
+        this.trigger('dragstart', e);
+        this.html.container.classList.add(draggingClass);
+      });
 
-    const draggingClass = `${this.cssPrefix}--dragging`;
-    dragBtn.addEventListener('dragstart', (e) => {
-      this.trigger('dragstart', e);
-      this.html.container.classList.add(draggingClass);
-    });
+      dragBtn.addEventListener('dragend', (e) => {
+        this.trigger('dragend', e);
+        setTimeout(() => this.html.container.classList.remove(draggingClass), 100);
+      });
 
-    dragBtn.addEventListener('dragend', (e) => {
-      this.trigger('dragend', e);
-      setTimeout(() => this.html.container.classList.remove(draggingClass), 100);
-    });
-
-    deleteBtn.addEventListener('click', () => this.trigger('deleteBtnClick'));
+      deleteBtn.addEventListener('click', () => this.trigger('deleteBtnClick'));
+    }
   }
 
   /**

@@ -20,6 +20,10 @@
     box-shadow: 0 0 30px rgba(0,0,0,.3);
     z-index: 2;
   }
+
+  &--playing {
+
+  }
 }
 
 .fl-pw_Track-cover {
@@ -67,7 +71,8 @@
 }
 
 .fl-pw_Track-btns-drag,
-.fl-pw_Track-btns-delete {
+.fl-pw_Track-btns-delete,
+.fl-pw_Track-btns-playingSign, {
   display: block;
 
   width: 2.1em;

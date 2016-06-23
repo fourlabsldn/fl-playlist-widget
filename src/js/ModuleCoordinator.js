@@ -116,7 +116,7 @@ export default class ModuleCoordinator {
    */
   async submitTracks() {
     const currentTracks = this.trackList.getTracks();
-    await this.ajax.trackSubmission.query({ userId: this.userId, tracks: currentTracks }, 'POST');
+    // await this.ajax.trackSubmission.query({ tracks: currentTracks }, 'POST');
     await this.loadChosenTracks();
   }
 

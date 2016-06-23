@@ -27,6 +27,7 @@ export default class TrackList extends ViewController {
    * @param  {Array<Object>} tracks
    */
   setTracks(tracks) {
+    if (tracks[0]) tracks[0].playing = true;
     assert(Array.isArray(tracks), `Invalid tracks object. Not an array: "${tracks}"`);
     this.clearAllTracks();
     tracks.forEach(trackInfo => this.addTrack(trackInfo));
@@ -54,7 +55,8 @@ export default class TrackList extends ViewController {
 
     newTrack.on('dragstart', (track, e) => {
       e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);
-      const allTracks = this.tracks.map(t => t.getContainer());
+      // Rearrange all tracks except the one playing
+      const allTracks = this.tracks.filter(t => !t.info.playing).map(t => t.getContainer());
       const trackEl = track.getContainer();
       trackReorderDrag(e, trackEl, allTracks);
     });
