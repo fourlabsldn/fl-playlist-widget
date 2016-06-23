@@ -1,4 +1,4 @@
-.fl-pw_SubmissionBox {
+.fl-pw_SearchBox {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -11,13 +11,13 @@
       -ms-flex-align: stretch;
           align-items: stretch; }
 
-.fl-pw_SubmissionBox-textInput {
+.fl-pw_SearchBox-textInput {
   -webkit-box-flex: 4;
   -webkit-flex: 4 4;
       -ms-flex: 4 4;
           flex: 4 4; }
 
-.fl-pw_SubmissionBox-submitBtn {
+.fl-pw_SearchBox-submitBtn {
   -webkit-box-flex: 1;
   -webkit-flex: 1 4;
       -ms-flex: 1 4;
@@ -167,10 +167,13 @@
   cursor: pointer;
   background-color: inherit;
   padding: .2em 1em;
+  width: 100%;
+  text-align: left;
+  border: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; }
-  .fl-pw_SearchResults-result:hover {
+  .fl-pw_SearchResults-result:hover, .fl-pw_SearchResults-result:active, .fl-pw_SearchResults-result:focus {
     -webkit-filter: brightness(95%);
             filter: brightness(95%); }
   .fl-pw_SearchResults-result:active {

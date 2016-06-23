@@ -1,14 +1,14 @@
-.fl-pw_SubmissionBox {
+.fl-pw_SearchBox {
   display: flex;
   flex-flow: row wrap;
   align-items: stretch;
 }
 
-.fl-pw_SubmissionBox-textInput {
+.fl-pw_SearchBox-textInput {
   flex: 4 4;
 }
 
-.fl-pw_SubmissionBox-submitBtn {
+.fl-pw_SearchBox-submitBtn {
   flex: 1 4;
   min-width: 3em;
   fill: #222;

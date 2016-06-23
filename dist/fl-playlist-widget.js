@@ -3807,6 +3807,7 @@ var SearchResults = function (_ViewController) {
     _this.on('resultClick', function () {
       return _this.setVisible(false);
     });
+    _this.handleKeyboardNavigation();
     return _this;
   }
 
@@ -3846,7 +3847,7 @@ var SearchResults = function (_ViewController) {
     value: function addResult(info) {
       var _this3 = this;
 
-      var result = document.createElement('div');
+      var result = document.createElement('button');
       result.classList.add(this.cssPrefix + '-result');
 
       if (info.album && info.album.images && info.album.images[1]) {
@@ -3918,30 +3919,73 @@ var SearchResults = function (_ViewController) {
     value: function clearResults() {
       this.html.container.innerHTML = '';
     }
+  }, {
+    key: 'handleKeyboardNavigation',
+    value: function handleKeyboardNavigation() {
+      var _this5 = this;
+
+      var container = arguments.length <= 0 || arguments[0] === undefined ? this.html.container : arguments[0];
+
+      container.addEventListener('keydown', function (e) {
+        e.preventDefault();
+        // Only navigate if there are enough elements
+        if (_this5.getContainer().children.length < 2) {
+          return;
+        }
+        var arrowDownCode = 40;
+        var arrowUpCode = 38;
+
+        var activeElement = document.activeElement;
+        assert(activeElement, 'No active element found');
+        if (activeElement.nextSibling && e.keyCode === arrowDownCode) {
+          activeElement.nextSibling.focus();
+        } else if (activeElement.previousSibling && e.keyCode === arrowUpCode) {
+          activeElement.previousSibling.focus();
+        } else {
+          _this5.startKeyboardNavigation();
+        }
+      });
+    }
+
+    /**
+     * Focuses on the first element to start the keyboard navigation.
+     * @public
+     * @method startKeyboardNavigation
+     * @return {[type]} [description]
+     */
+
+  }, {
+    key: 'startKeyboardNavigation',
+    value: function startKeyboardNavigation() {
+      var firstElement = this.getContainer().children[0];
+      if (firstElement) {
+        firstElement.focus();
+      }
+    }
   }]);
 
   return SearchResults;
 }(ViewController);
 
-var SubmissionBox = function (_ViewController) {
-  _inherits(SubmissionBox, _ViewController);
+var SearchBox = function (_ViewController) {
+  _inherits(SearchBox, _ViewController);
 
-  function SubmissionBox(modulePrefix) {
-    _classCallCheck(this, SubmissionBox);
+  function SearchBox(modulePrefix) {
+    _classCallCheck(this, SearchBox);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SubmissionBox).call(this, modulePrefix));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBox).call(this, modulePrefix));
 
     _this.highlightTimeout = null;
     _this.acceptEvents('submit', 'usertyping');
     return _this;
   }
 
-  _createClass(SubmissionBox, [{
+  _createClass(SearchBox, [{
     key: 'buildHtml',
     value: function buildHtml() {
       var _this2 = this;
 
-      _get(Object.getPrototypeOf(SubmissionBox.prototype), 'buildHtml', this).call(this);
+      _get(Object.getPrototypeOf(SearchBox.prototype), 'buildHtml', this).call(this);
 
       var submitBtn = document.createElement('button');
       this.html.submitBtn = submitBtn;
@@ -3963,7 +4007,7 @@ var SubmissionBox = function (_ViewController) {
         if (keyPressedCode === enterKeyCode) {
           _this2.trigger('submit');
         } else {
-          _this2.trigger('usertyping');
+          _this2.trigger('usertyping', keyPressedCode);
         }
       });
     }
@@ -4024,7 +4068,7 @@ var SubmissionBox = function (_ViewController) {
     }
   }]);
 
-  return SubmissionBox;
+  return SearchBox;
 }(ViewController);
 
 var WidgetContainer = function (_ViewController) {
@@ -4054,9 +4098,9 @@ var WidgetContainer = function (_ViewController) {
       loadingIndicator.classList.add(this.cssPrefix + '-loadingIndicator');
       this.html.container.appendChild(loadingIndicator);
 
-      var submissionBox = document.createElement('span');
-      this.html.submissionBox = submissionBox;
-      this.html.container.appendChild(submissionBox);
+      var searchBox = document.createElement('span');
+      this.html.searchBox = searchBox;
+      this.html.container.appendChild(searchBox);
 
       var tracksContainer = document.createElement('div');
       this.html.tracksContainer = tracksContainer;
@@ -4276,7 +4320,7 @@ var ModuleCoordinator = function () {
 
     _classCallCheck(this, ModuleCoordinator);
 
-    this.submissionBox = new SubmissionBox(modulePrefix);
+    this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
     this.trackList = new TrackList(modulePrefix);
     this.searchResults = new SearchResults(modulePrefix);
@@ -4284,36 +4328,49 @@ var ModuleCoordinator = function () {
     this.ajax.trackSearch = new Ajax('https://api.spotify.com/v1/search');
     Object.preventExtensions(this);
 
-    this.widgetContainer.set('submissionBox', this.submissionBox);
+    this.widgetContainer.set('searchBox', this.searchBox);
     this.widgetContainer.set('trackList', this.trackList);
     this.widgetContainer.set('searchResults', this.searchResults);
-    // this.submissionBox.on('submit', () => this.submitTrack());
+    // this.searchBox.on('submit', () => this.submitTrack());
 
-    this.submissionBox.on('usertyping', debounce(200, _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
-      var searchString, tracksFound;
-      return _regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              searchString = _this.submissionBox.getInput();
-              _context.next = 3;
-              return _this.searchTrack(searchString);
+    this.searchBox.on('usertyping', debounce(200, function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(box, keyCode) {
+        var searchString, tracksFound, arrowDownCode, arrowUpCode;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                searchString = _this.searchBox.getInput();
+                _context.next = 3;
+                return _this.searchTrack(searchString);
 
-            case 3:
-              tracksFound = _context.sent;
+              case 3:
+                tracksFound = _context.sent;
 
-              if (tracksFound) {
-                console.table(tracksFound);
-                _this.searchResults.setResults(tracksFound);
-              }
+                if (tracksFound) {
+                  _this.searchResults.setResults(tracksFound);
+                }
 
-            case 5:
-            case 'end':
-              return _context.stop();
+                arrowDownCode = 40;
+                arrowUpCode = 38;
+
+                if (keyCode === arrowDownCode || keyCode === arrowUpCode) {
+                  console.log(keyCode);
+                  _this.searchResults.startKeyboardNavigation();
+                }
+
+              case 8:
+              case 'end':
+                return _context.stop();
+            }
           }
-        }
-      }, _callee, _this);
-    }))));
+        }, _callee, _this);
+      }));
+
+      return function (_x, _x2) {
+        return ref.apply(this, arguments);
+      };
+    }()));
 
     this.searchResults.on('resultClick', function (el, trackId) {
       _this.submitTrack(trackId);
@@ -4365,7 +4422,7 @@ var ModuleCoordinator = function () {
 
       var duration = 2000;
       this.widgetContainer.displayInfo(message, isError, duration);
-      this.submissionBox.showOutcomeSuccess(!isError, duration);
+      this.searchBox.showOutcomeSuccess(!isError, duration);
     }
 
     /**
@@ -4453,7 +4510,7 @@ var ModuleCoordinator = function () {
         }, _callee2, this, [[3, 10]]);
       }));
 
-      function searchTrack(_x2) {
+      function searchTrack(_x4) {
         return ref.apply(this, arguments);
       }
 

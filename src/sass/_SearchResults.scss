@@ -28,11 +28,17 @@
   background-color: inherit;
   padding: .2em 1em;
 
+  width: 100%;
+  text-align: left;
+  border: 0;
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
-  &:hover {
+  &:hover,
+  &:active,
+  &:focus {
     filter: brightness(95%);
   }
 

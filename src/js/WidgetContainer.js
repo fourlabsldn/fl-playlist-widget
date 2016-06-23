@@ -21,9 +21,9 @@ export default class WidgetContainer extends ViewController {
     loadingIndicator.classList.add(`${this.cssPrefix}-loadingIndicator`);
     this.html.container.appendChild(loadingIndicator);
 
-    const submissionBox = document.createElement('span');
-    this.html.submissionBox = submissionBox;
-    this.html.container.appendChild(submissionBox);
+    const searchBox = document.createElement('span');
+    this.html.searchBox = searchBox;
+    this.html.container.appendChild(searchBox);
 
     const tracksContainer = document.createElement('div');
     this.html.tracksContainer = tracksContainer;

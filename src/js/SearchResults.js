@@ -10,6 +10,7 @@ export default class SearchResults extends ViewController {
 
     this.acceptEvents('resultClick');
     this.on('resultClick', () => this.setVisible(false));
+    this.handleKeyboardNavigation();
   }
 
   /**
@@ -35,7 +36,7 @@ export default class SearchResults extends ViewController {
    * @param  {[type]} info [description]
    */
   addResult(info) {
-    const result = document.createElement('div');
+    const result = document.createElement('button');
     result.classList.add(`${this.cssPrefix}-result`);
 
     if (info.album && info.album.images && info.album.images[1]) {
@@ -95,5 +96,36 @@ export default class SearchResults extends ViewController {
    */
   clearResults() {
     this.html.container.innerHTML = '';
+  }
+
+  handleKeyboardNavigation(container = this.html.container) {
+    container.addEventListener('keydown', (e) => {
+      e.preventDefault();
+      // Only navigate if there are enough elements
+      if (this.getContainer().children.length < 2) { return; }
+      const arrowDownCode = 40;
+      const arrowUpCode = 38;
+
+      const activeElement = document.activeElement;
+      assert(activeElement, 'No active element found');
+      if (activeElement.nextSibling && e.keyCode === arrowDownCode) {
+        activeElement.nextSibling.focus();
+      } else if (activeElement.previousSibling && e.keyCode === arrowUpCode) {
+        activeElement.previousSibling.focus();
+      } else {
+        this.startKeyboardNavigation();
+      }
+    });
+  }
+
+  /**
+   * Focuses on the first element to start the keyboard navigation.
+   * @public
+   * @method startKeyboardNavigation
+   * @return {[type]} [description]
+   */
+  startKeyboardNavigation() {
+    const firstElement = this.getContainer().children[0];
+    if (firstElement) { firstElement.focus(); }
   }
 }

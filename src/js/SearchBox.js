@@ -2,7 +2,7 @@ import ViewController from './ViewController';
 import assert from 'fl-assert';
 import constants from './utils/constants';
 
-export default class SubmissionBox extends ViewController {
+export default class SearchBox extends ViewController {
   constructor(modulePrefix) {
     super(modulePrefix);
     this.highlightTimeout = null;
@@ -32,7 +32,7 @@ export default class SubmissionBox extends ViewController {
       if (keyPressedCode === enterKeyCode) {
         this.trigger('submit');
       } else {
-        this.trigger('usertyping');
+        this.trigger('usertyping', keyPressedCode);
       }
     });
   }
