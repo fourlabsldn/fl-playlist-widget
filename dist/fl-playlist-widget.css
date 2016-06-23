@@ -51,12 +51,20 @@
   -webkit-flex-flow: row nowrap;
       -ms-flex-flow: row nowrap;
           flex-flow: row nowrap;
+  position: relative;
   padding: .3em 1em;
   border: 1px solid #dddddd;
   -webkit-border-radius: 5px;
           border-radius: 5px;
   margin-top: .5em;
-  background-blend-mode: color-dodge; }
+  background-blend-mode: color-dodge;
+  -webkit-transition: all .2s ease;
+  transition: all .2s ease; }
+  .fl-pw_TrackList-track--dragging {
+    border-color: #aaaaaa;
+    -webkit-box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    z-index: 2; }
 
 .fl-pw_TrackList-track-cover {
   width: 5em;
@@ -98,9 +106,18 @@
   text-align: center; }
 
 .fl-pw_TrackList-track-dragBtn {
-  -webkit-align-self: flex-start;
-      -ms-flex-item-align: start;
-          align-self: flex-start;
-  margin-left: auto; }
+  position: absolute;
+  top: .5em;
+  right: 1em;
+  width: 2em;
+  height: 2em;
+  -webkit-border-radius: 1em;
+          border-radius: 1em;
+  border: none;
+  font-size: .8em;
+  background-color: #e0e0e0;
+  fill: #303030;
+  cursor: -webkit-grab;
+  cursor: grab; }
 
 /*# sourceMappingURL=fl-playlist-widget.css.map */

@@ -7,11 +7,19 @@
 .fl-pw_TrackList-track {
   display: flex;
   flex-flow: row nowrap;
+  position: relative;
   padding: .3em 1em;
   border: 1px solid $c-border;
   border-radius: 5px;
   margin-top: .5em;
   background-blend-mode: color-dodge;
+  transition: all .2s ease;
+
+  &--dragging {
+    border-color: darken($c-border, 20%);
+    box-shadow: 0 0 30px rgba(0,0,0,.3);
+    z-index: 2;
+  }
 }
 
 .fl-pw_TrackList-track-cover {
@@ -55,6 +63,16 @@
 }
 
 .fl-pw_TrackList-track-dragBtn {
-  align-self: flex-start;
-  margin-left: auto;
+  position: absolute;
+  top: .5em;
+  right: 1em;
+
+  width: 2em;
+  height: 2em;
+  border-radius: 1em;
+  border: none;
+  font-size: .8em;
+  background-color: $c-button-background;
+  fill: $c-button-text;
+  cursor: grab;
 }

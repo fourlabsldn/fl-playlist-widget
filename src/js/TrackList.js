@@ -20,14 +20,22 @@ export default class TrackList extends ViewController {
   }
 
   setTracks(tracks) {
+    const draggingClass = `${this.cssPrefix}-track--dragging`
     this.html.container.innerHTML = '';
     assert(Array.isArray(tracks), `Invalid tracks object. Not an array: "${tracks}"`);
     tracks.forEach(track => {
       const trackEl = this.createTrackEl(track);
       this.html.container.appendChild(trackEl);
+
       trackEl.dragBtn.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);
+        trackEl.classList.add(draggingClass);
         const allTracks = Array.from(this.html.container.children);
         trackReorderDrag(e, trackEl, allTracks);
+      });
+
+      trackEl.dragBtn.addEventListener('dragend', () => {
+        trackEl.classList.remove(draggingClass);
       });
     });
     this.tracks = tracks;

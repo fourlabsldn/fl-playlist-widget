@@ -2086,14 +2086,22 @@ var TrackList = function (_ViewController) {
     value: function setTracks(tracks) {
       var _this2 = this;
 
+      var draggingClass = this.cssPrefix + '-track--dragging';
       this.html.container.innerHTML = '';
       assert(Array.isArray(tracks), 'Invalid tracks object. Not an array: "' + tracks + '"');
       tracks.forEach(function (track) {
         var trackEl = _this2.createTrackEl(track);
         _this2.html.container.appendChild(trackEl);
+
         trackEl.dragBtn.addEventListener('dragstart', function (e) {
+          e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);
+          trackEl.classList.add(draggingClass);
           var allTracks = Array.from(_this2.html.container.children);
           trackReorderDrag(e, trackEl, allTracks);
+        });
+
+        trackEl.dragBtn.addEventListener('dragend', function () {
+          trackEl.classList.remove(draggingClass);
         });
       });
       this.tracks = tracks;
