@@ -34,6 +34,31 @@
   .fl-pw_WidgetContainer-info--error {
     color: #e4585b; }
 
+.fl-pw_WidgetContainer-tracksContainer {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow-y: visible; }
+
+.fl-pw_WidgetContainer-resultsList {
+  width: 100%;
+  background-color: #f9f9f9;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  min-height: 4em;
+  -webkit-border-radius: 0 0 2px 2px;
+          border-radius: 0 0 2px 2px;
+  -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: all .2s ease, visibility 0s;
+  transition: all .2s ease, visibility 0s; }
+  .fl-pw_WidgetContainer-resultsList--visible {
+    visibility: visible;
+    opacity: 1; }
+
 .fl-pw_TrackList {
   display: -webkit-box;
   display: -webkit-flex;

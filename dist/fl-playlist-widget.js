@@ -2423,10 +2423,20 @@ var WidgetContainer = function (_ViewController) {
       this.html.submissionBox = submissionBox;
       this.html.container.appendChild(submissionBox);
 
+      var tracksContainer = document.createElement('div');
+      this.html.tracksContainer = tracksContainer;
+      tracksContainer.classList.add(this.cssPrefix + '-tracksContainer');
+      this.html.container.appendChild(tracksContainer);
+
       var trackList = document.createElement('div');
       this.html.trackList = trackList;
       trackList.classList.add(this.cssPrefix + '-trackList');
-      this.html.container.appendChild(trackList);
+      tracksContainer.appendChild(trackList);
+
+      var resultsList = document.createElement('div');
+      this.html.resultsList = resultsList;
+      resultsList.classList.add(this.cssPrefix + '-resultsList');
+      tracksContainer.appendChild(resultsList);
     }
 
     /**
