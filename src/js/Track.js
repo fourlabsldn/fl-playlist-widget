@@ -80,4 +80,13 @@ export default class Track extends ViewController {
     deleteBtn.addEventListener('click', () => this.trigger('deleteBtnClick'));
   }
 
+  /**
+   * @public
+   * @method getInfo
+   * @return {Object}
+   */
+  getInfo() {
+    return this.info;
+  }
+
 }

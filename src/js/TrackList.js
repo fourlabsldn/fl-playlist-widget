@@ -8,7 +8,6 @@ export default class TrackList extends ViewController {
   constructor(modulePrefix) {
     super(modulePrefix);
     this.tracks = [];
-    this.setTracks(this.tracks);
     Object.preventExtensions(this);
 
     this.acceptEvents('change');
@@ -19,7 +18,7 @@ export default class TrackList extends ViewController {
   }
 
   getTracks() {
-    return this.tracks.slice();
+    return this.tracks.map(t => t.getInfo());
   }
 
   /**

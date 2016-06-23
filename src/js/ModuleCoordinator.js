@@ -5,27 +5,52 @@ import WidgetContainer from './WidgetContainer';
 import Ajax from './utils/Ajax';
 import assert from 'fl-assert';
 import debounce from './utils/debounce';
-import demoData from './utils/demoData';
-
 
 export default class ModuleCoordinator {
-  constructor(modulePrefix) {
+  constructor(modulePrefix, userId) {
+    this.userId = userId;
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
     this.trackList = new TrackList(modulePrefix);
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
-    this.ajax.trackSearch = new Ajax('https://api.spotify.com/v1/search');
     Object.preventExtensions(this);
+
+    this.ajax.trackSearch = new Ajax(
+      'https://api.spotify.com/v1/search',
+      { type: 'track' }
+    );
+
+    this.ajax.trackSubmission = new Ajax(
+      'https://api.spotify.com/v1/search',
+      { userId: this.userId }
+    );
+
+    this.ajax.trackLoading = new Ajax(
+      'https://api.spotify.com/v1/search',
+      { type: 'track', userId: this.userId }
+    );
 
     this.widgetContainer.set('searchBox', this.searchBox);
     this.widgetContainer.set('trackList', this.trackList);
     this.widgetContainer.set('searchResults', this.searchResults);
+
+    this.listenToElementsEvents();
+    this.loadChosenTracks();
+  }
+
+  /**
+   * Called once at instantiation time
+   * @private
+   * @method listenToElementsEvents
+   * @return {void}
+   */
+  listenToElementsEvents() {
     this.searchBox.on('enterPressed', () => {
       const firstResult = this.searchResults.getFirst();
       if (!firstResult) { return; }
       this.searchResults.setVisible(false);
-      this.submitTrack(firstResult);
+      this.addTrack(firstResult);
     });
 
     const debouncedTrackSearch = debounce(200, async () => {
@@ -47,25 +72,8 @@ export default class ModuleCoordinator {
     });
 
     this.searchResults.on('resultClick', (el, trackInfo) => {
-      this.submitTrack(trackInfo);
+      this.addTrack(trackInfo);
     });
-    this.loadChosenTracks();
-  }
-
-
-  /**
-   * @private
-   * @method isValid
-   * @param  {String} trackUri
-   * @return {Boolean}
-   */
-  isValid(trackUri) {
-    const linkValidation = /^https:\/\/open.spotify.com\/track\/\w{22}$/;
-    const uriValidation = /^spotify:track:\w{22}$/;
-    const idValidation = /^\w{22}$/;
-    return linkValidation.test(trackUri)
-      || uriValidation.test(trackUri)
-      || idValidation.test(trackUri);
   }
 
   /**
@@ -90,20 +98,26 @@ export default class ModuleCoordinator {
     this.searchBox.showOutcomeSuccess(!isError, duration);
   }
 
+  /**
+   * @private
+   * @method addTrack
+   * @param  {Object} trackInfo
+   */
+  addTrack(trackInfo) {
+    this.trackList.addTrack(trackInfo);
+    this.submitTracks();
+  }
 
   /**
+   * Submits all local tracks to server.
    * @private
    * @method submitTrack
    * @return {void}
    */
-  submitTrack(trackInfo) {
-    if (this.isValid(trackInfo.id)) {
-      this.displayInfo('Valid track');
-    } else {
-      this.displayInfo('Invalid track', true);
-    }
-
-    this.trackList.addTrack(trackInfo);
+  async submitTracks() {
+    const currentTracks = this.trackList.getTracks();
+    await this.ajax.trackSubmission.query({ userId: this.userId, tracks: currentTracks }, 'POST');
+    await this.loadChosenTracks();
   }
 
   /**
@@ -111,8 +125,10 @@ export default class ModuleCoordinator {
    * @method loadChosenTracks
    * @return {tracks}
    */
-  loadChosenTracks() {
-    this.trackList.setTracks(demoData);
+  async loadChosenTracks() {
+    // await this.ajax.loadTracks.query({ tracks: currentTracks }, 'POST');
+    const demoTracks = this.trackList.getTracks();
+    this.trackList.setTracks(demoTracks);
   }
 
 
@@ -126,11 +142,7 @@ export default class ModuleCoordinator {
     if (!searchString) { return null; }
     let tracksFound = null;
     try {
-      const res = await this.ajax.trackSearch.query({
-        type: 'track',
-        q: searchString,
-      });
-
+      const res = await this.ajax.trackSearch.query({ q: searchString });
       tracksFound = res.tracks.items;
     } catch (e) {
       assert.warn(false, `Error searching tracks: ${e.message}`);

@@ -3330,6 +3330,18 @@ var Track = function (_ViewController) {
         return _this2.trigger('deleteBtnClick');
       });
     }
+
+    /**
+     * @public
+     * @method getInfo
+     * @return {Object}
+     */
+
+  }, {
+    key: 'getInfo',
+    value: function getInfo() {
+      return this.info;
+    }
   }]);
 
   return Track;
@@ -3614,7 +3626,6 @@ var TrackList = function (_ViewController) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TrackList).call(this, modulePrefix));
 
     _this.tracks = [];
-    _this.setTracks(_this.tracks);
     Object.preventExtensions(_this);
 
     _this.acceptEvents('change');
@@ -3629,7 +3640,9 @@ var TrackList = function (_ViewController) {
   }, {
     key: 'getTracks',
     value: function getTracks() {
-      return this.tracks.slice();
+      return this.tracks.map(function (t) {
+        return t.getInfo();
+      });
     }
 
     /**
@@ -4209,10 +4222,13 @@ var WidgetContainer = function (_ViewController) {
 
 var Ajax = function () {
   function Ajax(url) {
+    var defaultParameters = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
     _classCallCheck(this, Ajax);
 
     assert(url, 'No URL provided on instantiation');
     this.url = url;
+    this.defaultParameters = defaultParameters;
   }
 
   _createClass(Ajax, [{
@@ -4226,7 +4242,7 @@ var Ajax = function () {
             switch (_context.prev = _context.next) {
               case 0:
                 console.log('LOADING FROM SERVER');
-                requestUrl = this.addParametersToUrl(params, url);
+                requestUrl = this.addParametersToUrl(url, this.defaultParameters, params);
                 requestConfig = {
                   method: 'GET',
                   cache: 'no-cache'
@@ -4269,7 +4285,7 @@ var Ajax = function () {
         }, _callee, this, [[4, 10], [13, 20]]);
       }));
 
-      function query(_x, _x2) {
+      function query(_x2, _x3) {
         return ref.apply(this, arguments);
       }
 
@@ -4280,31 +4296,59 @@ var Ajax = function () {
      * Adds parameters as GET string parameters to a prepared URL
      * @private
      * @method _addParametersToUrl
-     * @param  {Object} params
      * @param  {String} url
+     * @param  {Object} params
      * @return {String} The full URL with parameters
      */
     // TODO: this must be more robust. What about www.asdf.com/, www.asdf.com/?, www.asdf.com
 
   }, {
     key: 'addParametersToUrl',
-    value: function addParametersToUrl(params) {
-      var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
+    value: function addParametersToUrl() {
+      var url = arguments.length <= 0 || arguments[0] === undefined ? this.url : arguments[0];
 
       var getParams = [];
-      var keys = Object.keys(params);
+
+      for (var _len = arguments.length, paramObjects = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        paramObjects[_key - 1] = arguments[_key];
+      }
+
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var key = _step.value;
+        for (var _iterator = paramObjects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var params = _step.value;
 
-          var value = params[key] !== undefined && params[key] !== null ? params[key].toString() : '';
-          var encodedKey = encodeURIComponent(key);
-          var encodedValue = encodeURIComponent(value);
-          getParams.push(encodedKey + '=' + encodedValue);
+          var keys = Object.keys(params);
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = keys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var key = _step2.value;
+
+              var value = params[key] !== undefined && params[key] !== null ? params[key].toString() : '';
+              var encodedKey = encodeURIComponent(key);
+              var encodedValue = encodeURIComponent(value);
+              getParams.push(encodedKey + '=' + encodedValue);
+            }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
+            }
+          }
         }
       } catch (err) {
         _didIteratorError = true;
@@ -4350,109 +4394,111 @@ function debounce(wait, func, immediate) {
 	};
 }
 
-var demoData = [{ "album": { "album_type": "album", "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"], "external_urls": { "spotify": "https://open.spotify.com/album/0TN9abNwnSnMW3jxw6uIeL" }, "href": "https://api.spotify.com/v1/albums/0TN9abNwnSnMW3jxw6uIeL", "id": "0TN9abNwnSnMW3jxw6uIeL", "images": [{ "height": 640, "url": "https://i.scdn.co/image/da88959a881cdc64bd576383c755fec0af2ca5f5", "width": 640 }, { "height": 300, "url": "https://i.scdn.co/image/6d2190a9b3f711b57e6ee924fa343239a36752df", "width": 300 }, { "height": 64, "url": "https://i.scdn.co/image/66f1b8e6703f912ffd76947ab8ab428a87e44ed0", "width": 64 }], "name": "Total Life Forever", "type": "album", "uri": "spotify:album:0TN9abNwnSnMW3jxw6uIeL" }, "artists": [{ "external_urls": { "spotify": "https://open.spotify.com/artist/6FQqZYVfTNQ1pCqfkwVFEa" }, "href": "https://api.spotify.com/v1/artists/6FQqZYVfTNQ1pCqfkwVFEa", "id": "6FQqZYVfTNQ1pCqfkwVFEa", "name": "Foals", "type": "artist", "uri": "spotify:artist:6FQqZYVfTNQ1pCqfkwVFEa" }], "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"], "disc_number": 1, "duration_ms": 409560, "explicit": true, "external_ids": { "isrc": "GBAHT1000047" }, "external_urls": { "spotify": "https://open.spotify.com/track/4i3txPQIUV4eC9g9FBpi9I" }, "href": "https://api.spotify.com/v1/tracks/4i3txPQIUV4eC9g9FBpi9I", "id": "4i3txPQIUV4eC9g9FBpi9I", "name": "Spanish Sahara", "popularity": 60, "preview_url": "https://p.scdn.co/mp3-preview/75d32af506df2354251f80726ab3e0656fa8e8f7", "track_number": 5, "type": "track", "uri": "spotify:track:4i3txPQIUV4eC9g9FBpi9I" }, { "album": { "album_type": "album", "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"], "external_urls": { "spotify": "https://open.spotify.com/album/0UccZZgelTAbbk3OSPZymO" }, "href": "https://api.spotify.com/v1/albums/0UccZZgelTAbbk3OSPZymO", "id": "0UccZZgelTAbbk3OSPZymO", "images": [{ "height": 640, "url": "https://i.scdn.co/image/f66195f98d32ffb0f1fcca0ea9e69e2794ec6742", "width": 640 }, { "height": 300, "url": "https://i.scdn.co/image/1f594d484a753cf21d909f3eaf0c3953d7caca61", "width": 300 }, { "height": 64, "url": "https://i.scdn.co/image/f323863361593570fe9a932e006a5a8b834991ec", "width": 64 }], "name": "Greatest Hits Volume One - The Singles", "type": "album", "uri": "spotify:album:0UccZZgelTAbbk3OSPZymO" }, "artists": [{ "external_urls": { "spotify": "https://open.spotify.com/artist/2sil8z5kiy4r76CRTXxBCA" }, "href": "https://api.spotify.com/v1/artists/2sil8z5kiy4r76CRTXxBCA", "id": "2sil8z5kiy4r76CRTXxBCA", "name": "The Goo Goo Dolls", "type": "artist", "uri": "spotify:artist:2sil8z5kiy4r76CRTXxBCA" }], "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"], "disc_number": 1, "duration_ms": 238333, "explicit": false, "external_ids": { "isrc": "USWB10704696" }, "external_urls": { "spotify": "https://open.spotify.com/track/7p1PhtGLjq0ISncRXBHqXY" }, "href": "https://api.spotify.com/v1/tracks/7p1PhtGLjq0ISncRXBHqXY", "id": "7p1PhtGLjq0ISncRXBHqXY", "name": "Here Is Gone", "popularity": 52, "preview_url": "https://p.scdn.co/mp3-preview/4a8b9f71672407eeae6b138cf27ad1613cafe767", "track_number": 3, "type": "track", "uri": "spotify:track:7p1PhtGLjq0ISncRXBHqXY" }, { "album": { "album_type": "album", "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"], "external_urls": { "spotify": "https://open.spotify.com/album/67cksuMf5EvK5pu1DwGeFi" }, "href": "https://api.spotify.com/v1/albums/67cksuMf5EvK5pu1DwGeFi", "id": "67cksuMf5EvK5pu1DwGeFi", "images": [{ "height": 640, "url": "https://i.scdn.co/image/cc5549f65c77d85b5b5405ba3a18f15995a7be9b", "width": 640 }, { "height": 300, "url": "https://i.scdn.co/image/265b55a307f70ba0c3f4770843601ab7130f0de6", "width": 300 }, { "height": 64, "url": "https://i.scdn.co/image/82363a9ee7c45f8afce1df0e541e56dea1be2a33", "width": 64 }], "name": "Illusions", "type": "album", "uri": "spotify:album:67cksuMf5EvK5pu1DwGeFi" }, "artists": [{ "external_urls": { "spotify": "https://open.spotify.com/artist/0NSO0g40h9CTj13hKPskeb" }, "href": "https://api.spotify.com/v1/artists/0NSO0g40h9CTj13hKPskeb", "id": "0NSO0g40h9CTj13hKPskeb", "name": "Ibrahim Maalouf", "type": "artist", "uri": "spotify:artist:0NSO0g40h9CTj13hKPskeb" }], "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"], "disc_number": 1, "duration_ms": 291303, "explicit": false, "external_ids": { "isrc": "FRP8H1300280" }, "external_urls": { "spotify": "https://open.spotify.com/track/5EzGOkUwkRUXYAyvjlEHah" }, "href": "https://api.spotify.com/v1/tracks/5EzGOkUwkRUXYAyvjlEHah", "id": "5EzGOkUwkRUXYAyvjlEHah", "name": "True Sorry", "popularity": 49, "preview_url": "https://p.scdn.co/mp3-preview/6b6beff68189d762fb03f3a24c5ada56c6232f61", "track_number": 8, "type": "track", "uri": "spotify:track:5EzGOkUwkRUXYAyvjlEHah" }];
-
 var ModuleCoordinator = function () {
-  function ModuleCoordinator(modulePrefix) {
-    var _this = this;
-
+  function ModuleCoordinator(modulePrefix, userId) {
     _classCallCheck(this, ModuleCoordinator);
 
+    this.userId = userId;
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
     this.trackList = new TrackList(modulePrefix);
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
-    this.ajax.trackSearch = new Ajax('https://api.spotify.com/v1/search');
     Object.preventExtensions(this);
+
+    this.ajax.trackSearch = new Ajax('https://api.spotify.com/v1/search', { type: 'track' });
+
+    this.ajax.trackSubmission = new Ajax('https://api.spotify.com/v1/search', { userId: this.userId });
+
+    this.ajax.trackLoading = new Ajax('https://api.spotify.com/v1/search', { type: 'track', userId: this.userId });
 
     this.widgetContainer.set('searchBox', this.searchBox);
     this.widgetContainer.set('trackList', this.trackList);
     this.widgetContainer.set('searchResults', this.searchResults);
-    this.searchBox.on('enterPressed', function () {
-      var firstResult = _this.searchResults.getFirst();
-      if (!firstResult) {
-        return;
-      }
-      _this.searchResults.setVisible(false);
-      _this.submitTrack(firstResult);
-    });
 
-    var debouncedTrackSearch = debounce(200, _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
-      var searchString, tracksFound;
-      return _regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              searchString = _this.searchBox.getInput();
-              _context.next = 3;
-              return _this.searchTrack(searchString);
-
-            case 3:
-              tracksFound = _context.sent;
-
-              if (tracksFound) {
-                _this.searchResults.setResults(tracksFound);
-              }
-
-            case 5:
-            case 'end':
-              return _context.stop();
-          }
-        }
-      }, _callee, _this);
-    })));
-
-    this.searchBox.on('usertyping', function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(box, keyCode) {
-        var arrowDownCode, arrowUpCode;
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                arrowDownCode = 40;
-                arrowUpCode = 38;
-
-                if (keyCode === arrowDownCode || keyCode === arrowUpCode) {
-                  _this.searchResults.startKeyboardNavigation();
-                } else {
-                  debouncedTrackSearch();
-                }
-
-              case 3:
-              case 'end':
-                return _context2.stop();
-            }
-          }
-        }, _callee2, _this);
-      }));
-
-      return function (_x, _x2) {
-        return ref.apply(this, arguments);
-      };
-    }());
-
-    this.searchResults.on('resultClick', function (el, trackInfo) {
-      _this.submitTrack(trackInfo);
-    });
+    this.listenToElementsEvents();
     this.loadChosenTracks();
   }
 
   /**
+   * Called once at instantiation time
    * @private
-   * @method isValid
-   * @param  {String} trackUri
-   * @return {Boolean}
+   * @method listenToElementsEvents
+   * @return {void}
    */
 
 
   _createClass(ModuleCoordinator, [{
-    key: 'isValid',
-    value: function isValid(trackUri) {
-      var linkValidation = /^https:\/\/open.spotify.com\/track\/\w{22}$/;
-      var uriValidation = /^spotify:track:\w{22}$/;
-      var idValidation = /^\w{22}$/;
-      return linkValidation.test(trackUri) || uriValidation.test(trackUri) || idValidation.test(trackUri);
+    key: 'listenToElementsEvents',
+    value: function listenToElementsEvents() {
+      var _this = this;
+
+      this.searchBox.on('enterPressed', function () {
+        var firstResult = _this.searchResults.getFirst();
+        if (!firstResult) {
+          return;
+        }
+        _this.searchResults.setVisible(false);
+        _this.addTrack(firstResult);
+      });
+
+      var debouncedTrackSearch = debounce(200, _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
+        var searchString, tracksFound;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                searchString = _this.searchBox.getInput();
+                _context.next = 3;
+                return _this.searchTrack(searchString);
+
+              case 3:
+                tracksFound = _context.sent;
+
+                if (tracksFound) {
+                  _this.searchResults.setResults(tracksFound);
+                }
+
+              case 5:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, _this);
+      })));
+
+      this.searchBox.on('usertyping', function () {
+        var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(box, keyCode) {
+          var arrowDownCode, arrowUpCode;
+          return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  arrowDownCode = 40;
+                  arrowUpCode = 38;
+
+                  if (keyCode === arrowDownCode || keyCode === arrowUpCode) {
+                    _this.searchResults.startKeyboardNavigation();
+                  } else {
+                    debouncedTrackSearch();
+                  }
+
+                case 3:
+                case 'end':
+                  return _context2.stop();
+              }
+            }
+          }, _callee2, _this);
+        }));
+
+        return function (_x, _x2) {
+          return ref.apply(this, arguments);
+        };
+      }());
+
+      this.searchResults.on('resultClick', function (el, trackInfo) {
+        _this.addTrack(trackInfo);
+      });
     }
 
     /**
@@ -4487,21 +4533,55 @@ var ModuleCoordinator = function () {
 
     /**
      * @private
+     * @method addTrack
+     * @param  {Object} trackInfo
+     */
+
+  }, {
+    key: 'addTrack',
+    value: function addTrack(trackInfo) {
+      this.trackList.addTrack(trackInfo);
+      this.submitTracks();
+    }
+
+    /**
+     * Submits all local tracks to server.
+     * @private
      * @method submitTrack
      * @return {void}
      */
 
   }, {
-    key: 'submitTrack',
-    value: function submitTrack(trackInfo) {
-      if (this.isValid(trackInfo.id)) {
-        this.displayInfo('Valid track');
-      } else {
-        this.displayInfo('Invalid track', true);
+    key: 'submitTracks',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3() {
+        var currentTracks;
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                currentTracks = this.trackList.getTracks();
+                _context3.next = 3;
+                return this.ajax.trackSubmission.query({ userId: this.userId, tracks: currentTracks }, 'POST');
+
+              case 3:
+                _context3.next = 5;
+                return this.loadChosenTracks();
+
+              case 5:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function submitTracks() {
+        return ref.apply(this, arguments);
       }
 
-      this.trackList.addTrack(trackInfo);
-    }
+      return submitTracks;
+    }()
 
     /**
      * Loads tracks form the server
@@ -4511,9 +4591,32 @@ var ModuleCoordinator = function () {
 
   }, {
     key: 'loadChosenTracks',
-    value: function loadChosenTracks() {
-      this.trackList.setTracks(demoData);
-    }
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4() {
+        var demoTracks;
+        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                // await this.ajax.loadTracks.query({ tracks: currentTracks }, 'POST');
+                demoTracks = this.trackList.getTracks();
+
+                this.trackList.setTracks(demoTracks);
+
+              case 2:
+              case 'end':
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function loadChosenTracks() {
+        return ref.apply(this, arguments);
+      }
+
+      return loadChosenTracks;
+    }()
 
     /**
      * Queries Spotify for a track based on a string
@@ -4525,51 +4628,47 @@ var ModuleCoordinator = function () {
   }, {
     key: 'searchTrack',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(searchString) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(searchString) {
         var tracksFound, res;
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 if (searchString) {
-                  _context3.next = 2;
+                  _context5.next = 2;
                   break;
                 }
 
-                return _context3.abrupt('return', null);
+                return _context5.abrupt('return', null);
 
               case 2:
                 tracksFound = null;
-                _context3.prev = 3;
-                _context3.next = 6;
-                return this.ajax.trackSearch.query({
-                  type: 'track',
-                  q: searchString
-                });
+                _context5.prev = 3;
+                _context5.next = 6;
+                return this.ajax.trackSearch.query({ q: searchString });
 
               case 6:
-                res = _context3.sent;
-
+                res = _context5.sent;
 
                 tracksFound = res.tracks.items;
-                _context3.next = 13;
+                _context5.next = 13;
                 break;
 
               case 10:
-                _context3.prev = 10;
-                _context3.t0 = _context3['catch'](3);
+                _context5.prev = 10;
+                _context5.t0 = _context5['catch'](3);
 
-                assert.warn(false, 'Error searching tracks: ' + _context3.t0.message);
+                assert.warn(false, 'Error searching tracks: ' + _context5.t0.message);
 
               case 13:
-                return _context3.abrupt('return', tracksFound);
+                return _context5.abrupt('return', tracksFound);
 
               case 14:
               case 'end':
-                return _context3.stop();
+                return _context5.stop();
             }
           }
-        }, _callee3, this, [[3, 10]]);
+        }, _callee5, this, [[3, 10]]);
       }));
 
       function searchTrack(_x4) {
