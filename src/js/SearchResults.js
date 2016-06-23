@@ -69,6 +69,12 @@ export default class SearchResults extends ViewController {
 
     if (info.id) {
       result.addEventListener('click', () => this.trigger('resultClick', info.id));
+      result.addEventListener('keydown', (e) => {
+        const enterKeyCode = 13;
+        if (e.keyCode === enterKeyCode) {
+          this.trigger('resultClick', info.id);
+        }
+      });
     }
     this.html.container.appendChild(result);
   }

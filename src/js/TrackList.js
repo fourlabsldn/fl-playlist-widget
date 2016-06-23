@@ -41,6 +41,7 @@ export default class TrackList extends ViewController {
   clearAllTracks() {
     // TODO implement this
     this.tracks.forEach(t => t.destroy());
+    this.tracks = [];
   }
 
   /**

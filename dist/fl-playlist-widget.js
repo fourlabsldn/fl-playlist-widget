@@ -3661,6 +3661,7 @@ var TrackList = function (_ViewController) {
       this.tracks.forEach(function (t) {
         return t.destroy();
       });
+      this.tracks = [];
     }
 
     /**
@@ -3881,6 +3882,12 @@ var SearchResults = function (_ViewController) {
       if (info.id) {
         result.addEventListener('click', function () {
           return _this3.trigger('resultClick', info.id);
+        });
+        result.addEventListener('keydown', function (e) {
+          var enterKeyCode = 13;
+          if (e.keyCode === enterKeyCode) {
+            _this3.trigger('resultClick', info.id);
+          }
         });
       }
       this.html.container.appendChild(result);
