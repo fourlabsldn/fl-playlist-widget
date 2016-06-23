@@ -19,7 +19,7 @@ export default class TrackList extends ViewController {
   }
 
   getTracks() {
-
+    return this.tracks.slice();
   }
 
   /**

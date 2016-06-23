@@ -21,7 +21,12 @@ export default class ModuleCoordinator {
     this.widgetContainer.set('searchBox', this.searchBox);
     this.widgetContainer.set('trackList', this.trackList);
     this.widgetContainer.set('searchResults', this.searchResults);
-    // this.searchBox.on('submit', () => this.submitTrack());
+    this.searchBox.on('enterPressed', () => {
+      const firstResult = this.searchResults.getFirst();
+      if (!firstResult) { return; }
+      this.searchResults.setVisible(false);
+      this.submitTrack(firstResult);
+    });
 
     this.searchBox.on('usertyping', debounce(200, async (box, keyCode) => {
       const searchString = this.searchBox.getInput();

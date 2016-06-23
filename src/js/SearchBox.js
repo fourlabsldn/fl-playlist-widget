@@ -6,20 +6,17 @@ export default class SearchBox extends ViewController {
   constructor(modulePrefix) {
     super(modulePrefix);
     this.highlightTimeout = null;
-    this.acceptEvents('submit', 'usertyping');
+    this.acceptEvents('enterPressed', 'usertyping');
   }
 
   buildHtml() {
     super.buildHtml();
 
-    const submitBtn = document.createElement('button');
-    this.html.submitBtn = submitBtn;
-    submitBtn.innerHTML = constants.soundNoteIcon;
-    submitBtn.classList.add(`${this.cssPrefix}-submitBtn`, 'btn', 'btn-default');
-    this.html.container.appendChild(submitBtn);
-    submitBtn.addEventListener('click', () => {
-      this.trigger('submit', 'usertyping');
-    });
+    const icon = document.createElement('div');
+    this.html.icon = icon;
+    icon.innerHTML = constants.soundNoteIcon;
+    icon.classList.add(`${this.cssPrefix}-icon`, 'btn', 'btn-default');
+    this.html.container.appendChild(icon);
 
     const textInput = document.createElement('input');
     this.html.textInput = textInput;
@@ -30,7 +27,7 @@ export default class SearchBox extends ViewController {
       const enterKeyCode = 13;
       const keyPressedCode = e.keyCode ? e.keyCode : e.which;
       if (keyPressedCode === enterKeyCode) {
-        this.trigger('submit');
+        this.trigger('enterPressed');
       } else {
         this.trigger('usertyping', keyPressedCode);
       }

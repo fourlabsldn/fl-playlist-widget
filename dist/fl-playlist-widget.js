@@ -3628,7 +3628,9 @@ var TrackList = function (_ViewController) {
     }
   }, {
     key: 'getTracks',
-    value: function getTracks() {}
+    value: function getTracks() {
+      return this.tracks.slice();
+    }
 
     /**
      * @public
@@ -3802,6 +3804,7 @@ var SearchResults = function (_ViewController) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchResults).call(this, modulePrefix));
 
+    _this.results = [];
     Object.preventExtensions(_this);
 
     _this.acceptEvents('resultClick');
@@ -3890,11 +3893,14 @@ var SearchResults = function (_ViewController) {
           }
         });
       }
+
+      result.info = info;
       this.html.container.appendChild(result);
+      this.results.push(result);
     }
 
     /**
-     * @private
+     * @public
      * @method setVisible
      * @param  {Boolean} visible
      */
@@ -3924,7 +3930,22 @@ var SearchResults = function (_ViewController) {
   }, {
     key: 'clearResults',
     value: function clearResults() {
-      this.html.container.innerHTML = '';
+      this.results.forEach(function (r) {
+        return r.remove();
+      });
+      this.results = [];
+    }
+
+    /**
+     * @public
+     * @method getFirst
+     * @return {Object}
+     */
+
+  }, {
+    key: 'getFirst',
+    value: function getFirst() {
+      return this.results[0] ? this.results[0].info : null;
     }
   }, {
     key: 'handleKeyboardNavigation',
@@ -3939,17 +3960,30 @@ var SearchResults = function (_ViewController) {
         if (_this5.getContainer().children.length < 2) {
           return;
         }
-        var arrowDownCode = 40;
-        var arrowUpCode = 38;
-
         var activeElement = document.activeElement;
         assert(activeElement, 'No active element found');
-        if (activeElement.nextSibling && e.keyCode === arrowDownCode) {
-          activeElement.nextSibling.focus();
-        } else if (activeElement.previousSibling && e.keyCode === arrowUpCode) {
-          activeElement.previousSibling.focus();
-        } else {
-          _this5.startKeyboardNavigation();
+
+        switch (e.keyCode) {
+          case 40:
+            // arrow down
+            if (activeElement.nextSibling) {
+              activeElement.nextSibling.focus();
+            } else {
+              _this5.startKeyboardNavigation();
+            }
+            break;
+          case 38:
+            // arrow up
+            if (activeElement.previousSibling) {
+              activeElement.previousSibling.focus();
+            }
+            break;
+          case 27:
+            // escape key
+            _this5.setVisible(false);
+            break;
+          default:
+            break;
         }
       });
     }
@@ -3983,7 +4017,7 @@ var SearchBox = function (_ViewController) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBox).call(this, modulePrefix));
 
     _this.highlightTimeout = null;
-    _this.acceptEvents('submit', 'usertyping');
+    _this.acceptEvents('enterPressed', 'usertyping');
     return _this;
   }
 
@@ -3994,14 +4028,11 @@ var SearchBox = function (_ViewController) {
 
       _get(Object.getPrototypeOf(SearchBox.prototype), 'buildHtml', this).call(this);
 
-      var submitBtn = document.createElement('button');
-      this.html.submitBtn = submitBtn;
-      submitBtn.innerHTML = constants.soundNoteIcon;
-      submitBtn.classList.add(this.cssPrefix + '-submitBtn', 'btn', 'btn-default');
-      this.html.container.appendChild(submitBtn);
-      submitBtn.addEventListener('click', function () {
-        _this2.trigger('submit', 'usertyping');
-      });
+      var icon = document.createElement('div');
+      this.html.icon = icon;
+      icon.innerHTML = constants.soundNoteIcon;
+      icon.classList.add(this.cssPrefix + '-icon', 'btn', 'btn-default');
+      this.html.container.appendChild(icon);
 
       var textInput = document.createElement('input');
       this.html.textInput = textInput;
@@ -4012,7 +4043,7 @@ var SearchBox = function (_ViewController) {
         var enterKeyCode = 13;
         var keyPressedCode = e.keyCode ? e.keyCode : e.which;
         if (keyPressedCode === enterKeyCode) {
-          _this2.trigger('submit');
+          _this2.trigger('enterPressed');
         } else {
           _this2.trigger('usertyping', keyPressedCode);
         }
@@ -4338,7 +4369,14 @@ var ModuleCoordinator = function () {
     this.widgetContainer.set('searchBox', this.searchBox);
     this.widgetContainer.set('trackList', this.trackList);
     this.widgetContainer.set('searchResults', this.searchResults);
-    // this.searchBox.on('submit', () => this.submitTrack());
+    this.searchBox.on('enterPressed', function () {
+      var firstResult = _this.searchResults.getFirst();
+      if (!firstResult) {
+        return;
+      }
+      _this.searchResults.setVisible(false);
+      _this.submitTrack(firstResult);
+    });
 
     this.searchBox.on('usertyping', debounce(200, function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(box, keyCode) {

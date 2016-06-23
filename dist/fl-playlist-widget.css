@@ -12,17 +12,16 @@
           align-items: stretch; }
 
 .fl-pw_SearchBox-textInput {
-  -webkit-box-flex: 4;
-  -webkit-flex: 4 4;
-      -ms-flex: 4 4;
-          flex: 4 4; }
+  -webkit-box-flex: 5;
+  -webkit-flex: 5 5;
+      -ms-flex: 5 5;
+          flex: 5 5; }
 
-.fl-pw_SearchBox-submitBtn {
+.fl-pw_SearchBox-icon {
   -webkit-box-flex: 1;
-  -webkit-flex: 1 4;
-      -ms-flex: 1 4;
-          flex: 1 4;
-  min-width: 3em;
+  -webkit-flex: 1 5;
+      -ms-flex: 1 5;
+          flex: 1 5;
   fill: #222; }
 
 .fl-pw_WidgetContainer-info {

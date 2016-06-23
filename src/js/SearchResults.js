@@ -6,6 +6,7 @@ export default class SearchResults extends ViewController {
 
   constructor(modulePrefix) {
     super(modulePrefix);
+    this.results = [];
     Object.preventExtensions(this);
 
     this.acceptEvents('resultClick');
@@ -76,11 +77,14 @@ export default class SearchResults extends ViewController {
         }
       });
     }
+
+    result.info = info;
     this.html.container.appendChild(result);
+    this.results.push(result);
   }
 
   /**
-   * @private
+   * @public
    * @method setVisible
    * @param  {Boolean} visible
    */
@@ -101,7 +105,17 @@ export default class SearchResults extends ViewController {
    * @return {void}
    */
   clearResults() {
-    this.html.container.innerHTML = '';
+    this.results.forEach(r => r.remove());
+    this.results = [];
+  }
+
+  /**
+   * @public
+   * @method getFirst
+   * @return {Object}
+   */
+  getFirst() {
+    return this.results[0] ? this.results[0].info : null;
   }
 
   handleKeyboardNavigation(container = this.html.container) {
@@ -109,17 +123,27 @@ export default class SearchResults extends ViewController {
       e.preventDefault();
       // Only navigate if there are enough elements
       if (this.getContainer().children.length < 2) { return; }
-      const arrowDownCode = 40;
-      const arrowUpCode = 38;
-
       const activeElement = document.activeElement;
       assert(activeElement, 'No active element found');
-      if (activeElement.nextSibling && e.keyCode === arrowDownCode) {
-        activeElement.nextSibling.focus();
-      } else if (activeElement.previousSibling && e.keyCode === arrowUpCode) {
-        activeElement.previousSibling.focus();
-      } else {
-        this.startKeyboardNavigation();
+
+      switch (e.keyCode) {
+        case 40: // arrow down
+          if (activeElement.nextSibling) {
+            activeElement.nextSibling.focus();
+          } else {
+            this.startKeyboardNavigation();
+          }
+          break;
+        case 38: // arrow up
+          if (activeElement.previousSibling) {
+            activeElement.previousSibling.focus();
+          }
+          break;
+        case 27: // escape key
+          this.setVisible(false);
+          break;
+        default:
+          break;
       }
     });
   }
