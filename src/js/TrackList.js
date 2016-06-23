@@ -45,7 +45,7 @@ export default class TrackList extends ViewController {
   }
 
   /**
-   * @private
+   * @public
    * @method addTrack
    * @param  {Object} trackInfo
    * @return {Track}

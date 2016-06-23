@@ -3268,7 +3268,7 @@ var Track = function (_ViewController) {
       coverImg.setAttribute('src', info.album.images[1].url);
       this.html.container.appendChild(coverImg);
 
-      var linearGradients = 'linear-gradient(rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.94))';
+      var linearGradients = 'linear-gradient(45deg, rgb(255, 255, 255) 0%, rgba(255, 255, 255, .94) 50%, rgba(255, 255, 255, 0.8) 100%)';
       this.html.container.style.background = 'url("' + info.album.images[1].url + '"), ' + linearGradients;
 
       var trackInfoClass = this.cssPrefix + '-info';
@@ -3665,7 +3665,7 @@ var TrackList = function (_ViewController) {
     }
 
     /**
-     * @private
+     * @public
      * @method addTrack
      * @param  {Object} trackInfo
      * @return {Track}
@@ -3881,12 +3881,12 @@ var SearchResults = function (_ViewController) {
 
       if (info.id) {
         result.addEventListener('click', function () {
-          return _this3.trigger('resultClick', info.id);
+          return _this3.trigger('resultClick', info);
         });
         result.addEventListener('keydown', function (e) {
           var enterKeyCode = 13;
           if (e.keyCode === enterKeyCode) {
-            _this3.trigger('resultClick', info.id);
+            _this3.trigger('resultClick', info);
           }
         });
       }
@@ -4362,7 +4362,6 @@ var ModuleCoordinator = function () {
                 arrowUpCode = 38;
 
                 if (keyCode === arrowDownCode || keyCode === arrowUpCode) {
-                  console.log(keyCode);
                   _this.searchResults.startKeyboardNavigation();
                 }
 
@@ -4379,10 +4378,10 @@ var ModuleCoordinator = function () {
       };
     }()));
 
-    this.searchResults.on('resultClick', function (el, trackId) {
-      _this.submitTrack(trackId);
-      _this.loadChosenTracks();
+    this.searchResults.on('resultClick', function (el, trackInfo) {
+      _this.submitTrack(trackInfo);
     });
+    this.loadChosenTracks();
   }
 
   /**
@@ -4440,12 +4439,14 @@ var ModuleCoordinator = function () {
 
   }, {
     key: 'submitTrack',
-    value: function submitTrack(trackId) {
-      if (this.isValid(trackId)) {
+    value: function submitTrack(trackInfo) {
+      if (this.isValid(trackInfo.id)) {
         this.displayInfo('Valid track');
       } else {
         this.displayInfo('Invalid track', true);
       }
+
+      this.trackList.addTrack(trackInfo);
     }
 
     /**

@@ -21,7 +21,7 @@ export default class Track extends ViewController {
     coverImg.setAttribute('src', info.album.images[1].url);
     this.html.container.appendChild(coverImg);
 
-    const linearGradients = 'linear-gradient(rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.94))';
+    const linearGradients = 'linear-gradient(45deg, rgb(255, 255, 255) 0%, rgba(255, 255, 255, .94) 50%, rgba(255, 255, 255, 0.8) 100%)';
     this.html.container.style.background = `url("${info.album.images[1].url}"), ${linearGradients}`;
 
     const trackInfoClass = `${this.cssPrefix}-info`;

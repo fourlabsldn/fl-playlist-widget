@@ -33,15 +33,14 @@ export default class ModuleCoordinator {
       const arrowDownCode = 40;
       const arrowUpCode = 38;
       if (keyCode === arrowDownCode || keyCode === arrowUpCode) {
-        console.log(keyCode);
         this.searchResults.startKeyboardNavigation();
       }
     }));
 
-    this.searchResults.on('resultClick', (el, trackId) => {
-      this.submitTrack(trackId);
-      this.loadChosenTracks();
+    this.searchResults.on('resultClick', (el, trackInfo) => {
+      this.submitTrack(trackInfo);
     });
+    this.loadChosenTracks();
   }
 
 
@@ -88,12 +87,14 @@ export default class ModuleCoordinator {
    * @method submitTrack
    * @return {void}
    */
-  submitTrack(trackId) {
-    if (this.isValid(trackId)) {
+  submitTrack(trackInfo) {
+    if (this.isValid(trackInfo.id)) {
       this.displayInfo('Valid track');
     } else {
       this.displayInfo('Invalid track', true);
     }
+
+    this.trackList.addTrack(trackInfo);
   }
 
   /**
