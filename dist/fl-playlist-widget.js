@@ -4378,43 +4378,59 @@ var ModuleCoordinator = function () {
       _this.submitTrack(firstResult);
     });
 
-    this.searchBox.on('usertyping', debounce(200, function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(box, keyCode) {
-        var searchString, tracksFound, arrowDownCode, arrowUpCode;
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
+    var debouncedTrackSearch = debounce(200, _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
+      var searchString, tracksFound;
+      return _regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              searchString = _this.searchBox.getInput();
+              _context.next = 3;
+              return _this.searchTrack(searchString);
+
+            case 3:
+              tracksFound = _context.sent;
+
+              if (tracksFound) {
+                _this.searchResults.setResults(tracksFound);
+              }
+
+            case 5:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, _callee, _this);
+    })));
+
+    this.searchBox.on('usertyping', function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(box, keyCode) {
+        var arrowDownCode, arrowUpCode;
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
-                searchString = _this.searchBox.getInput();
-                _context.next = 3;
-                return _this.searchTrack(searchString);
-
-              case 3:
-                tracksFound = _context.sent;
-
-                if (tracksFound) {
-                  _this.searchResults.setResults(tracksFound);
-                }
-
                 arrowDownCode = 40;
                 arrowUpCode = 38;
 
                 if (keyCode === arrowDownCode || keyCode === arrowUpCode) {
                   _this.searchResults.startKeyboardNavigation();
+                } else {
+                  debouncedTrackSearch();
                 }
 
-              case 8:
+              case 3:
               case 'end':
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, _this);
+        }, _callee2, _this);
       }));
 
       return function (_x, _x2) {
         return ref.apply(this, arguments);
       };
-    }()));
+    }());
 
     this.searchResults.on('resultClick', function (el, trackInfo) {
       _this.submitTrack(trackInfo);
@@ -4509,51 +4525,51 @@ var ModuleCoordinator = function () {
   }, {
     key: 'searchTrack',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(searchString) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(searchString) {
         var tracksFound, res;
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 if (searchString) {
-                  _context2.next = 2;
+                  _context3.next = 2;
                   break;
                 }
 
-                return _context2.abrupt('return', null);
+                return _context3.abrupt('return', null);
 
               case 2:
                 tracksFound = null;
-                _context2.prev = 3;
-                _context2.next = 6;
+                _context3.prev = 3;
+                _context3.next = 6;
                 return this.ajax.trackSearch.query({
                   type: 'track',
                   q: searchString
                 });
 
               case 6:
-                res = _context2.sent;
+                res = _context3.sent;
 
 
                 tracksFound = res.tracks.items;
-                _context2.next = 13;
+                _context3.next = 13;
                 break;
 
               case 10:
-                _context2.prev = 10;
-                _context2.t0 = _context2['catch'](3);
+                _context3.prev = 10;
+                _context3.t0 = _context3['catch'](3);
 
-                assert.warn(false, 'Error searching tracks: ' + _context2.t0.message);
+                assert.warn(false, 'Error searching tracks: ' + _context3.t0.message);
 
               case 13:
-                return _context2.abrupt('return', tracksFound);
+                return _context3.abrupt('return', tracksFound);
 
               case 14:
               case 'end':
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this, [[3, 10]]);
+        }, _callee3, this, [[3, 10]]);
       }));
 
       function searchTrack(_x4) {

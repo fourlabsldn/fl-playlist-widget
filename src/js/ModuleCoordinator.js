@@ -28,19 +28,23 @@ export default class ModuleCoordinator {
       this.submitTrack(firstResult);
     });
 
-    this.searchBox.on('usertyping', debounce(200, async (box, keyCode) => {
+    const debouncedTrackSearch = debounce(200, async () => {
       const searchString = this.searchBox.getInput();
       const tracksFound = await this.searchTrack(searchString);
       if (tracksFound) {
         this.searchResults.setResults(tracksFound);
       }
+    });
 
+    this.searchBox.on('usertyping', async (box, keyCode) => {
       const arrowDownCode = 40;
       const arrowUpCode = 38;
       if (keyCode === arrowDownCode || keyCode === arrowUpCode) {
         this.searchResults.startKeyboardNavigation();
+      } else {
+        debouncedTrackSearch();
       }
-    }));
+    });
 
     this.searchResults.on('resultClick', (el, trackInfo) => {
       this.submitTrack(trackInfo);
