@@ -5,6 +5,7 @@ import constants from './utils/constants';
 export default class SubmissionBox extends ViewController {
   constructor(modulePrefix) {
     super(modulePrefix);
+    this.highlightTimeout = null;
     this.acceptEvents('submit');
   }
 
@@ -51,5 +52,29 @@ export default class SubmissionBox extends ViewController {
   setInput(text) {
     assert(typeof text === 'string', `Invalid value for inputText: ${text}`);
     this.html.textInput.value = text;
+  }
+
+
+  /**
+   * Highlights the submission box for success or failure
+   * @method showOutcomeSuccess
+   * @param  {Boolean} noError
+   * @param  {Int} duration
+   * @return {void}
+   */
+  showOutcomeSuccess(noError = true, duration = 2000) {
+    const successClass = 'has-success';
+    const errorClass = 'has-error';
+
+    if (noError) {
+      this.html.container.classList.add(successClass);
+    } else {
+      this.html.container.classList.add(errorClass);
+    }
+    clearTimeout(this.highlightTimeout);
+    this.highlightTimeout = setTimeout(
+      () => this.html.container.classList.remove(successClass, errorClass),
+      duration
+    );
   }
 }

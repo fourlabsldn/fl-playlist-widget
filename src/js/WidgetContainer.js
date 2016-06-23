@@ -48,9 +48,10 @@ export default class WidgetContainer extends ViewController {
    * Displays a message for a certain period of time
    * @method displayInfo
    * @param  {String} message
+   * @param  {Int} duration
    * @return {void}
    */
-  displayInfo(message, error = false) {
+  displayInfo(message, error = false, duration = 2000) {
     const errorClass = `${this.cssPrefix}-info--error`;
     const successClass = `${this.cssPrefix}-info--success`;
     this.html.info.classList.remove(errorClass, successClass);
@@ -65,7 +66,7 @@ export default class WidgetContainer extends ViewController {
         this.html.info.classList.remove(errorClass, successClass);
         this.html.info.innerHTML = '';
       },
-      2000
+      duration
     );
   }
 }

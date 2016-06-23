@@ -2172,6 +2172,7 @@ var SubmissionBox = function (_ViewController) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SubmissionBox).call(this, modulePrefix));
 
+    _this.highlightTimeout = null;
     _this.acceptEvents('submit');
     return _this;
   }
@@ -2229,6 +2230,36 @@ var SubmissionBox = function (_ViewController) {
     value: function setInput(text) {
       assert(typeof text === 'string', 'Invalid value for inputText: ' + text);
       this.html.textInput.value = text;
+    }
+
+    /**
+     * Highlights the submission box for success or failure
+     * @method showOutcomeSuccess
+     * @param  {Boolean} noError
+     * @param  {Int} duration
+     * @return {void}
+     */
+
+  }, {
+    key: 'showOutcomeSuccess',
+    value: function showOutcomeSuccess() {
+      var _this3 = this;
+
+      var noError = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+      var duration = arguments.length <= 1 || arguments[1] === undefined ? 2000 : arguments[1];
+
+      var successClass = 'has-success';
+      var errorClass = 'has-error';
+
+      if (noError) {
+        this.html.container.classList.add(successClass);
+      } else {
+        this.html.container.classList.add(errorClass);
+      }
+      clearTimeout(this.highlightTimeout);
+      this.highlightTimeout = setTimeout(function () {
+        return _this3.html.container.classList.remove(successClass, errorClass);
+      }, duration);
     }
   }]);
 
@@ -2292,6 +2323,7 @@ var WidgetContainer = function (_ViewController) {
      * Displays a message for a certain period of time
      * @method displayInfo
      * @param  {String} message
+     * @param  {Int} duration
      * @return {void}
      */
 
@@ -2301,6 +2333,7 @@ var WidgetContainer = function (_ViewController) {
       var _this2 = this;
 
       var error = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+      var duration = arguments.length <= 2 || arguments[2] === undefined ? 2000 : arguments[2];
 
       var errorClass = this.cssPrefix + '-info--error';
       var successClass = this.cssPrefix + '-info--success';
@@ -2314,7 +2347,7 @@ var WidgetContainer = function (_ViewController) {
       this.errorTimeout = setTimeout(function () {
         _this2.html.info.classList.remove(errorClass, successClass);
         _this2.html.info.innerHTML = '';
-      }, 2000);
+      }, duration);
     }
   }]);
 
@@ -2351,11 +2384,9 @@ var ModuleCoordinator = function () {
     value: function submitTrack() {
       var trackUri = this.submissionBox.getInput();
       if (this.isValid(trackUri)) {
-        this.widgetContainer.displayInfo('Valid track');
-        console.log('valid');
+        this.displayInfo('Valid track');
       } else {
-        this.widgetContainer.displayInfo('Invalid track', true);
-        console.log('invalid');
+        this.displayInfo('Invalid track', true);
       }
     }
 
@@ -2384,6 +2415,23 @@ var ModuleCoordinator = function () {
     key: 'getWidget',
     value: function getWidget() {
       return this.widgetContainer.getContainer();
+    }
+
+    /**
+     * @method displayInfo
+     * @param  {String} message
+     * @param  {Boolean} isError
+     * @return {void}
+     */
+
+  }, {
+    key: 'displayInfo',
+    value: function displayInfo(message) {
+      var isError = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+
+      var duration = 2000;
+      this.widgetContainer.displayInfo(message, isError, duration);
+      this.submissionBox.showOutcomeSuccess(!isError, duration);
     }
   }]);
 

@@ -1,4 +1,4 @@
-import TrackList from './TrackList'; 
+import TrackList from './TrackList';
 import SubmissionBox from './SubmissionBox';
 import WidgetContainer from './WidgetContainer';
 
@@ -22,11 +22,9 @@ export default class ModuleCoordinator {
   submitTrack() {
     const trackUri = this.submissionBox.getInput();
     if (this.isValid(trackUri)) {
-      this.widgetContainer.displayInfo('Valid track');
-      console.log('valid');
+      this.displayInfo('Valid track');
     } else {
-      this.widgetContainer.displayInfo('Invalid track', true);
-      console.log('invalid');
+      this.displayInfo('Invalid track', true);
     }
   }
 
@@ -49,5 +47,17 @@ export default class ModuleCoordinator {
    */
   getWidget() {
     return this.widgetContainer.getContainer();
+  }
+
+  /**
+   * @method displayInfo
+   * @param  {String} message
+   * @param  {Boolean} isError
+   * @return {void}
+   */
+  displayInfo(message, isError = false) {
+    const duration = 2000;
+    this.widgetContainer.displayInfo(message, isError, duration);
+    this.submissionBox.showOutcomeSuccess(!isError, duration);
   }
 }
