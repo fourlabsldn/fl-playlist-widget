@@ -43,7 +43,7 @@
       -ms-flex-flow: column nowrap;
           flex-flow: column nowrap; }
 
-.fl-pw_TrackList-track {
+.fl-pw_Track {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -60,17 +60,17 @@
   background-blend-mode: color-dodge;
   -webkit-transition: all .2s ease;
   transition: all .2s ease; }
-  .fl-pw_TrackList-track--dragging {
+  .fl-pw_Track--dragging {
     border-color: #aaaaaa;
     -webkit-box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
     z-index: 2; }
 
-.fl-pw_TrackList-track-cover {
+.fl-pw_Track-cover {
   width: 5em;
   height: 5em; }
 
-.fl-pw_TrackList-track-info {
+.fl-pw_Track-info {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -80,20 +80,20 @@
           flex-flow: column nowrap;
   padding-left: 1em; }
 
-.fl-pw_TrackList-track-info-title,
-.fl-pw_TrackList-track-info-artist,
-.fl-pw_TrackList-track-info-explicit,
-.fl-pw_TrackList-track-btns {
+.fl-pw_Track-info-title,
+.fl-pw_Track-info-artist,
+.fl-pw_Track-info-explicit,
+.fl-pw_Track-btns {
   display: block;
   margin: .05em 0; }
 
-.fl-pw_TrackList-track-info-title {
+.fl-pw_Track-info-title {
   font-weight: bold; }
 
-.fl-pw_TrackList-track-info-artist {
+.fl-pw_Track-info-artist {
   opacity: .7; }
 
-.fl-pw_TrackList-track-info-explicit {
+.fl-pw_Track-info-explicit {
   display: inline-block;
   padding: 0 .0em .2em;
   margin: .2em 0;
@@ -105,11 +105,11 @@
   font-size: .8em;
   text-align: center; }
 
-.fl-pw_TrackList-track-btns {
+.fl-pw_Track-btns {
   margin-left: auto; }
 
-.fl-pw_TrackList-track-btns-drag,
-.fl-pw_TrackList-track-btns-delete {
+.fl-pw_Track-btns-drag,
+.fl-pw_Track-btns-delete {
   display: block;
   width: 2.1em;
   height: 2.1em;
@@ -120,15 +120,15 @@
   background-color: #e0e0e0;
   fill: #303030;
   margin-bottom: .5em; }
-  .fl-pw_TrackList-track-btns-drag:active,
-  .fl-pw_TrackList-track-btns-delete:active {
+  .fl-pw_Track-btns-drag:active,
+  .fl-pw_Track-btns-delete:active {
     background-color: #cecece; }
 
-.fl-pw_TrackList-track-btns-drag {
+.fl-pw_Track-btns-drag {
   cursor: -webkit-grab;
   cursor: grab; }
 
-.fl-pw_TrackList-track-btns-delete:hover {
+.fl-pw_Track-btns-delete:hover {
   fill: #e4585b; }
 
 /*# sourceMappingURL=fl-playlist-widget.css.map */

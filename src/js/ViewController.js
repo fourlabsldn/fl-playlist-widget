@@ -7,14 +7,14 @@ import assert from 'fl-assert';
  */
 
 export default class ViewController {
-  constructor(modulePrefix) {
+  constructor(modulePrefix, ...additionalArgs) {
     this.listeners = {};
     this.acceptEvents('destroy');
 
     this.modulePrefix = modulePrefix;
     this.cssPrefix = `${this.modulePrefix}_${this.constructor.name}`;
 
-    this.buildHtml();
+    this.buildHtml(...additionalArgs);
   }
 
   /**
@@ -67,8 +67,9 @@ export default class ViewController {
    * @method trigger
    * @param  {String} event
    */
-  trigger(event) {
-    this.listeners[event].forEach(fn => fn(this));
+  trigger(event, ...additionalArgs) {
+    assert(this.listeners[event], `Trying to trigger listener from invalid event: ${event}`);
+    this.listeners[event].forEach(fn => fn(this, ...additionalArgs));
   }
 
   destroy() {

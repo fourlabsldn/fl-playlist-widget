@@ -1,14 +1,19 @@
 import ViewController from './ViewController';
+import Track from './Track';
 import assert from 'fl-assert';
 import trackReorderDrag from './utils/trackReorderDrag';
+import removeIndex from './utils/removeIndex';
 import demoData from './utils/demoData';
-import constants from './utils/constants';
 
 export default class TrackList extends ViewController {
   constructor(modulePrefix) {
     super(modulePrefix);
-    this.tracks = demoData;
+    this.tracks = [];
     this.setTracks(this.tracks);
+    Object.preventExtensions(this);
+
+    this.acceptEvents('change');
+    this.setTracks(demoData);
   }
 
   buildHtml() {
@@ -19,103 +24,68 @@ export default class TrackList extends ViewController {
 
   }
 
-
   /**
    * @public
    * @method setTracks
    * @param  {Array<Object>} tracks
    */
   setTracks(tracks) {
-    this.html.container.innerHTML = '';
     assert(Array.isArray(tracks), `Invalid tracks object. Not an array: "${tracks}"`);
-    tracks.forEach(track => {
-      const trackEl = this.createTrackEl(track);
-      this.setTrackListeners(trackEl);
-      this.html.container.appendChild(trackEl);
-    });
-    this.tracks = tracks;
+    this.clearAllTracks();
+    tracks.forEach(trackInfo => this.addTrack(trackInfo));
   }
 
   /**
    * @private
-   * @method createTrackEl
-   * @param  {Object} track
-   * @return {HTMLElement}
+   * @method clearAllTracks
+   * @return {void}
    */
-  createTrackEl(track) {
-    const trackClass = `${this.cssPrefix}-track`;
-    const trackEl = document.createElement('div');
-    trackEl.classList.add(trackClass);
-
-    const coverImg = document.createElement('img');
-    coverImg.classList.add(`${trackClass}-cover`);
-    coverImg.setAttribute('src', track.album.images[1].url);
-    trackEl.appendChild(coverImg);
-
-    const linearGradients = 'linear-gradient(rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.94))';
-    trackEl.style.background = `url("${track.album.images[1].url}"), ${linearGradients}`;
-
-    const trackInfoClass = `${trackClass}-info`;
-    const trackInfo = document.createElement('div');
-    trackInfo.classList.add(trackInfoClass);
-    trackEl.appendChild(trackInfo);
-
-    const title = document.createElement('span');
-    title.classList.add(`${trackInfoClass}-title`);
-    title.innerHTML = track.name;
-    trackInfo.appendChild(title);
-
-    const artist = document.createElement('span');
-    artist.classList.add(`${trackInfoClass}-artist`);
-    artist.innerHTML = track.artists[0].name;
-    trackInfo.appendChild(artist);
-
-    if (track.explicit) {
-      const explicit = document.createElement('span');
-      explicit.classList.add(`${trackInfoClass}-explicit`);
-      explicit.innerHTML = 'explicit';
-      trackInfo.appendChild(explicit);
-    }
-
-    const buttonsBar = document.createElement('div');
-    const buttonsBarClass = `${trackClass}-btns`;
-    buttonsBar.classList.add(buttonsBarClass);
-    trackEl.appendChild(buttonsBar);
-
-    const dragBtn = document.createElement('button');
-    dragBtn.innerHTML = constants.dragIcon;
-    dragBtn.setAttribute('draggable', 'true');
-    dragBtn.classList.add(`${buttonsBarClass}-drag`);
-    trackEl.dragBtn = dragBtn;
-    buttonsBar.appendChild(dragBtn);
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.classList.add(`${buttonsBarClass}-delete`);
-    this.deleteBtn = deleteBtn;
-    deleteBtn.innerHTML = constants.trashIcon;
-    buttonsBar.appendChild(deleteBtn);
-
-    return trackEl;
+  clearAllTracks() {
+    // TODO implement this
+    this.tracks.forEach(t => t.destroy());
   }
 
   /**
    * @private
-   * Prepares a track element for insertion into the Wild
-   * @param {HTMLElement} track
-   * @method setTrackListeners
+   * @method addTrack
+   * @param  {Object} trackInfo
+   * @return {Track}
    */
-  setTrackListeners(trackEl) {
-    const draggingClass = `${this.cssPrefix}-track--dragging`
+  addTrack(trackInfo) {
+    const newTrack = new Track(this.modulePrefix, trackInfo);
 
-    trackEl.dragBtn.addEventListener('dragstart', (e) => {
+    newTrack.on('dragstart', (track, e) => {
       e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);
-      trackEl.classList.add(draggingClass);
-      const allTracks = Array.from(this.html.container.children);
+      const allTracks = this.tracks.map(t => t.getContainer());
+      const trackEl = track.getContainer();
       trackReorderDrag(e, trackEl, allTracks);
     });
 
-    trackEl.dragBtn.addEventListener('dragend', () => {
-      trackEl.classList.remove(draggingClass);
+    newTrack.on('dragend', () => {
+      // Reorder components according to their position.
+      const beforeReordering = JSON.stringify(this.html.container);
+      this.tracks.sort((t1, t2) => {
+        return t1.getContainer().getBoundingClientRect().top >
+               t2.getContainer().getBoundingClientRect().top;
+      });
+
+      // Trigger change if elements were reordered
+      const afterReordering = JSON.stringify(this.html.container);
+      if (beforeReordering !== afterReordering) {
+        this.trigger('change');
+      }
     });
+
+    newTrack.on('deleteBtnClick', () => {
+      const trackIndex = this.tracks.indexOf(newTrack);
+      assert(trackIndex !== -1, 'Invalid track being deleted.');
+      this.tracks = removeIndex(this.tracks, trackIndex);
+      newTrack.destroy();
+      this.trigger('change');
+    });
+
+    this.html.container.appendChild(newTrack.getContainer());
+    this.tracks.push(newTrack);
+    return newTrack;
   }
 }

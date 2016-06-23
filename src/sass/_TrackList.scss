@@ -4,7 +4,7 @@
 }
 
 
-.fl-pw_TrackList-track {
+.fl-pw_Track {
   display: flex;
   flex-flow: row nowrap;
   position: relative;
@@ -22,34 +22,34 @@
   }
 }
 
-.fl-pw_TrackList-track-cover {
+.fl-pw_Track-cover {
   width: 5em;
   height: 5em;
 }
 
-.fl-pw_TrackList-track-info {
+.fl-pw_Track-info {
   display: flex;
   flex-flow: column nowrap;
   padding-left: 1em;
 }
 
-.fl-pw_TrackList-track-info-title,
-.fl-pw_TrackList-track-info-artist,
-.fl-pw_TrackList-track-info-explicit,
-.fl-pw_TrackList-track-btns {
+.fl-pw_Track-info-title,
+.fl-pw_Track-info-artist,
+.fl-pw_Track-info-explicit,
+.fl-pw_Track-btns {
   display: block;
   margin: .05em 0;
 }
 
-.fl-pw_TrackList-track-info-title {
+.fl-pw_Track-info-title {
   font-weight: bold;
 }
 
-.fl-pw_TrackList-track-info-artist {
+.fl-pw_Track-info-artist {
   opacity: .7;
 }
 
-.fl-pw_TrackList-track-info-explicit {
+.fl-pw_Track-info-explicit {
   display: inline-block;
   padding: 0 .0em .2em;
   margin: .2em 0;
@@ -62,12 +62,12 @@
   text-align: center;
 }
 
-.fl-pw_TrackList-track-btns {
+.fl-pw_Track-btns {
   margin-left: auto;
 }
 
-.fl-pw_TrackList-track-btns-drag,
-.fl-pw_TrackList-track-btns-delete {
+.fl-pw_Track-btns-drag,
+.fl-pw_Track-btns-delete {
   display: block;
 
   width: 2.1em;
@@ -84,11 +84,11 @@
   }
 }
 
-.fl-pw_TrackList-track-btns-drag {
+.fl-pw_Track-btns-drag {
   cursor: grab;
 }
 
-.fl-pw_TrackList-track-btns-delete {
+.fl-pw_Track-btns-delete {
   &:hover {
     fill: $c-danger;
   }
