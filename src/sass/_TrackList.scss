@@ -3,6 +3,7 @@
   flex-flow: column nowrap;
 }
 
+
 .fl-pw_TrackList-track {
   display: flex;
   flex-flow: row nowrap;
@@ -10,6 +11,7 @@
   border: 1px solid $c-border;
   border-radius: 5px;
   margin-top: .5em;
+  background-blend-mode: color-dodge;
 }
 
 .fl-pw_TrackList-track-cover {
@@ -40,9 +42,9 @@
 
 .fl-pw_TrackList-track-info-explicit {
   display: inline-block;
-  padding: 0 .2em .2em;
+  padding: 0 .0em .2em;
   margin: .2em 0;
-  width: 6em;
+  width: 5em;
   border-radius: 3px;
 
   background-color: $c-danger;

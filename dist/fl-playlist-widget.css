@@ -55,7 +55,8 @@
   border: 1px solid #dddddd;
   -webkit-border-radius: 5px;
           border-radius: 5px;
-  margin-top: .5em; }
+  margin-top: .5em;
+  background-blend-mode: color-dodge; }
 
 .fl-pw_TrackList-track-cover {
   width: 5em;
@@ -85,9 +86,9 @@
 
 .fl-pw_TrackList-track-info-explicit {
   display: inline-block;
-  padding: 0 .2em .2em;
+  padding: 0 .0em .2em;
   margin: .2em 0;
-  width: 6em;
+  width: 5em;
   -webkit-border-radius: 3px;
           border-radius: 3px;
   background-color: #e4585b;

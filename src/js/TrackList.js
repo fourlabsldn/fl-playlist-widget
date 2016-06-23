@@ -42,6 +42,9 @@ export default class TrackList extends ViewController {
     coverImg.setAttribute('src', track.album.images[1].url);
     trackEl.appendChild(coverImg);
 
+    const linearGradients = 'linear-gradient(rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.94))';
+    trackEl.style.background = `url("${track.album.images[1].url}"), ${linearGradients}`;
+
     const trackInfoClass = `${trackClass}-info`;
     const trackInfo = document.createElement('div');
     trackInfo.classList.add(trackInfoClass);

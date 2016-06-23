@@ -1849,6 +1849,9 @@ var TrackList = function (_ViewController) {
       coverImg.setAttribute('src', track.album.images[1].url);
       trackEl.appendChild(coverImg);
 
+      var linearGradients = 'linear-gradient(rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.94))';
+      trackEl.style.background = 'url("' + track.album.images[1].url + '"), ' + linearGradients;
+
       var trackInfoClass = trackClass + '-info';
       var trackInfo = document.createElement('div');
       trackInfo.classList.add(trackInfoClass);
