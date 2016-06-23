@@ -19,29 +19,25 @@ export default class TrackList extends ViewController {
 
   }
 
+
+  /**
+   * @public
+   * @method setTracks
+   * @param  {Array<Object>} tracks
+   */
   setTracks(tracks) {
-    const draggingClass = `${this.cssPrefix}-track--dragging`
     this.html.container.innerHTML = '';
     assert(Array.isArray(tracks), `Invalid tracks object. Not an array: "${tracks}"`);
     tracks.forEach(track => {
       const trackEl = this.createTrackEl(track);
+      this.setTrackListeners(trackEl);
       this.html.container.appendChild(trackEl);
-
-      trackEl.dragBtn.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);
-        trackEl.classList.add(draggingClass);
-        const allTracks = Array.from(this.html.container.children);
-        trackReorderDrag(e, trackEl, allTracks);
-      });
-
-      trackEl.dragBtn.addEventListener('dragend', () => {
-        trackEl.classList.remove(draggingClass);
-      });
     });
     this.tracks = tracks;
   }
 
   /**
+   * @private
    * @method createTrackEl
    * @param  {Object} track
    * @return {HTMLElement}
@@ -81,13 +77,45 @@ export default class TrackList extends ViewController {
       trackInfo.appendChild(explicit);
     }
 
+    const buttonsBar = document.createElement('div');
+    const buttonsBarClass = `${trackClass}-btns`;
+    buttonsBar.classList.add(buttonsBarClass);
+    trackEl.appendChild(buttonsBar);
+
     const dragBtn = document.createElement('button');
     dragBtn.innerHTML = constants.dragIcon;
     dragBtn.setAttribute('draggable', 'true');
-    dragBtn.classList.add(`${trackClass}-dragBtn`);
+    dragBtn.classList.add(`${buttonsBarClass}-drag`);
     trackEl.dragBtn = dragBtn;
-    trackEl.appendChild(dragBtn);
+    buttonsBar.appendChild(dragBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList.add(`${buttonsBarClass}-delete`);
+    this.deleteBtn = deleteBtn;
+    deleteBtn.innerHTML = constants.trashIcon;
+    buttonsBar.appendChild(deleteBtn);
 
     return trackEl;
+  }
+
+  /**
+   * @private
+   * Prepares a track element for insertion into the Wild
+   * @param {HTMLElement} track
+   * @method setTrackListeners
+   */
+  setTrackListeners(trackEl) {
+    const draggingClass = `${this.cssPrefix}-track--dragging`
+
+    trackEl.dragBtn.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);
+      trackEl.classList.add(draggingClass);
+      const allTracks = Array.from(this.html.container.children);
+      trackReorderDrag(e, trackEl, allTracks);
+    });
+
+    trackEl.dragBtn.addEventListener('dragend', () => {
+      trackEl.classList.remove(draggingClass);
+    });
   }
 }

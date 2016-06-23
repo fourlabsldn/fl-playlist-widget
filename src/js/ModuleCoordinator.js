@@ -50,6 +50,7 @@ export default class ModuleCoordinator {
   }
 
   /**
+   * @private
    * @method displayInfo
    * @param  {String} message
    * @param  {Boolean} isError

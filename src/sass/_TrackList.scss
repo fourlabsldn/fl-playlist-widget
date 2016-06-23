@@ -36,7 +36,7 @@
 .fl-pw_TrackList-track-info-title,
 .fl-pw_TrackList-track-info-artist,
 .fl-pw_TrackList-track-info-explicit,
-.fl-pw_TrackList-track-dragBtn {
+.fl-pw_TrackList-track-btns {
   display: block;
   margin: .05em 0;
 }
@@ -62,17 +62,34 @@
   text-align: center;
 }
 
-.fl-pw_TrackList-track-dragBtn {
-  position: absolute;
-  top: .5em;
-  right: 1em;
+.fl-pw_TrackList-track-btns {
+  margin-left: auto;
+}
 
-  width: 2em;
-  height: 2em;
-  border-radius: 1em;
-  border: none;
+.fl-pw_TrackList-track-btns-drag,
+.fl-pw_TrackList-track-btns-delete {
+  display: block;
+
+  width: 2.1em;
+  height: 2.1em;
+  border-radius: 1.05em;
+  border: 0;
   font-size: .8em;
   background-color: $c-button-background;
   fill: $c-button-text;
+  margin-bottom: .5em;
+
+  &:active {
+    background-color: darken($c-button-background, 7%);
+  }
+}
+
+.fl-pw_TrackList-track-btns-drag {
   cursor: grab;
+}
+
+.fl-pw_TrackList-track-btns-delete {
+  &:hover {
+    fill: $c-danger;
+  }
 }
