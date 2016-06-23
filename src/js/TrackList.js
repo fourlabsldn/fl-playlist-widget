@@ -1,6 +1,8 @@
 import ViewController from './ViewController';
 import assert from 'fl-assert';
-import demoData from './demoData';
+import trackReorderDrag from './utils/trackReorderDrag';
+import demoData from './utils/demoData';
+import constants from './utils/constants';
 
 export default class TrackList extends ViewController {
   constructor(modulePrefix) {
@@ -23,6 +25,10 @@ export default class TrackList extends ViewController {
     tracks.forEach(track => {
       const trackEl = this.createTrackEl(track);
       this.html.container.appendChild(trackEl);
+      trackEl.dragBtn.addEventListener('dragstart', (e) => {
+        const allTracks = Array.from(this.html.container.children);
+        trackReorderDrag(e, trackEl, allTracks);
+      });
     });
     this.tracks = tracks;
   }
@@ -66,6 +72,13 @@ export default class TrackList extends ViewController {
       explicit.innerHTML = 'explicit';
       trackInfo.appendChild(explicit);
     }
+
+    const dragBtn = document.createElement('button');
+    dragBtn.innerHTML = constants.dragIcon;
+    dragBtn.setAttribute('draggable', 'true');
+    dragBtn.classList.add(`${trackClass}-dragBtn`);
+    trackEl.dragBtn = dragBtn;
+    trackEl.appendChild(dragBtn);
 
     return trackEl;
   }

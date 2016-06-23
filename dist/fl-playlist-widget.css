@@ -74,7 +74,8 @@
 
 .fl-pw_TrackList-track-info-title,
 .fl-pw_TrackList-track-info-artist,
-.fl-pw_TrackList-track-info-explicit {
+.fl-pw_TrackList-track-info-explicit,
+.fl-pw_TrackList-track-dragBtn {
   display: block;
   margin: .05em 0; }
 
@@ -95,5 +96,11 @@
   color: #f9f9f9;
   font-size: .8em;
   text-align: center; }
+
+.fl-pw_TrackList-track-dragBtn {
+  -webkit-align-self: flex-start;
+      -ms-flex-item-align: start;
+          align-self: flex-start;
+  margin-left: auto; }
 
 /*# sourceMappingURL=fl-playlist-widget.css.map */

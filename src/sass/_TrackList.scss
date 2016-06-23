@@ -27,7 +27,8 @@
 
 .fl-pw_TrackList-track-info-title,
 .fl-pw_TrackList-track-info-artist,
-.fl-pw_TrackList-track-info-explicit {
+.fl-pw_TrackList-track-info-explicit,
+.fl-pw_TrackList-track-dragBtn {
   display: block;
   margin: .05em 0;
 }
@@ -51,4 +52,9 @@
   color: $c-danger-text;
   font-size: .8em;
   text-align: center;
+}
+
+.fl-pw_TrackList-track-dragBtn {
+  align-self: flex-start;
+  margin-left: auto;
 }
