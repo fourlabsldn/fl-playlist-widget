@@ -39,6 +39,39 @@
   width: 100%;
   overflow-y: visible; }
 
+.fl-pw_WidgetContainer-tabs-labels {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row nowrap;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -webkit-align-content: stretch;
+      -ms-flex-line-pack: stretch;
+          align-content: stretch;
+  list-style: none;
+  padding: 0; }
+
+.fl-pw_WidgetContainer-tabs-label {
+  padding: 1em;
+  cursor: pointer; }
+  .fl-pw_WidgetContainer-tabs-label--selected {
+    background-color: #e0e0e0; }
+
+.fl-pw_WidgetContainer-tabs-contents {
+  list-style: none;
+  padding: 0; }
+
+.fl-pw_WidgetContainer-tabs-content {
+  display: none; }
+  .fl-pw_WidgetContainer-tabs-content--visible {
+    display: block; }
+
 .fl-pw_TrackList {
   display: -webkit-box;
   display: -webkit-flex;
@@ -137,6 +170,9 @@
 
 .fl-pw_Track-btns-delete:hover {
   fill: #e4585b; }
+
+.fl-pw_Track-btns-playingSign {
+  pointer-events: none; }
 
 .fl-pw_SearchResults {
   width: 100%;

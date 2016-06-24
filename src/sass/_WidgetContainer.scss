@@ -21,3 +21,34 @@
   width: 100%;
   overflow-y: visible;
 }
+
+.fl-pw_WidgetContainer-tabs {
+}
+.fl-pw_WidgetContainer-tabs-labels {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  align-content: stretch;
+  list-style: none;
+  padding: 0;
+}
+
+.fl-pw_WidgetContainer-tabs-label {
+  padding: 1em;
+  cursor: pointer;
+  &--selected {
+    background-color: $c-button-background;
+  }
+}
+
+.fl-pw_WidgetContainer-tabs-contents {
+  list-style: none;
+  padding: 0;
+}
+
+.fl-pw_WidgetContainer-tabs-content {
+  display: none;
+  &--visible {
+    display: block;
+  }
+}

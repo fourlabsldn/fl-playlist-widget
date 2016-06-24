@@ -4196,20 +4196,20 @@ var WidgetContainer = function (_ViewController) {
     value: function createTabs(labels, contents) {
       assert(labels.length === contents.length, 'Invalid arguments. tabLabels of size ' + labels.length + ' and tabContents of size ' + contents.length); // eslint-disable-line max-len
       var tabsClass = this.cssPrefix + '-tabs';
-      var labelClass = tabsClass + '-tab';
-      var labelSelectedClass = tabsClass + '--selected';
-      var tabClass = tabsClass + '-label';
-      var tabVisibleClass = tabsClass + '--visible';
+      var labelClass = tabsClass + '-label';
+      var labelSelectedClass = labelClass + '--selected';
+      var tabClass = tabsClass + '-content';
+      var tabVisibleClass = tabClass + '--visible';
 
       var tabsContainer = document.createElement('div');
       tabsContainer.classList.add(tabsClass);
 
       var tabLabels = document.createElement('ul');
-      tabLabels.classList.add(tabsClass + '-tabLabels');
+      tabLabels.classList.add(tabsClass + '-labels');
       tabsContainer.appendChild(tabLabels);
 
       var tabContents = document.createElement('ul');
-      tabContents.classList.add(tabsClass + '-tabContents');
+      tabContents.classList.add(tabsClass + '-contents');
       tabsContainer.appendChild(tabContents);
 
       function showTab(tabIndex) {
@@ -4247,6 +4247,7 @@ var WidgetContainer = function (_ViewController) {
         _loop(i);
       }
 
+      showTab(0);
       return tabsContainer;
     }
 

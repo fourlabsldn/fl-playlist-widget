@@ -57,20 +57,20 @@ export default class WidgetContainer extends ViewController {
     assert(labels.length === contents.length,
       `Invalid arguments. tabLabels of size ${labels.length} and tabContents of size ${contents.length}`); // eslint-disable-line max-len
     const tabsClass = `${this.cssPrefix}-tabs`;
-    const labelClass = `${tabsClass}-tab`;
-    const labelSelectedClass = `${tabsClass}--selected`;
-    const tabClass = `${tabsClass}-label`;
-    const tabVisibleClass = `${tabsClass}--visible`;
+    const labelClass = `${tabsClass}-label`;
+    const labelSelectedClass = `${labelClass}--selected`;
+    const tabClass = `${tabsClass}-content`;
+    const tabVisibleClass = `${tabClass}--visible`;
 
     const tabsContainer = document.createElement('div');
     tabsContainer.classList.add(tabsClass);
 
     const tabLabels = document.createElement('ul');
-    tabLabels.classList.add(`${tabsClass}-tabLabels`);
+    tabLabels.classList.add(`${tabsClass}-labels`);
     tabsContainer.appendChild(tabLabels);
 
     const tabContents = document.createElement('ul');
-    tabContents.classList.add(`${tabsClass}-tabContents`);
+    tabContents.classList.add(`${tabsClass}-contents`);
     tabsContainer.appendChild(tabContents);
 
     function showTab(tabIndex) {
@@ -97,6 +97,7 @@ export default class WidgetContainer extends ViewController {
       tabContents.appendChild(tabContent);
     }
 
+    showTab(0);
     return tabsContainer;
   }
 
