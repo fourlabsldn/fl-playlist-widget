@@ -13,7 +13,7 @@ export default class ModuleCoordinator {
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
     this.userTrackList = new TrackList(modulePrefix);
-    this.fullTrackList = new TrackList(modulePrefix);
+    this.fullTrackList = new TrackList(modulePrefix, false); // non-rearrageable
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
     Object.preventExtensions(this);
@@ -37,7 +37,6 @@ export default class ModuleCoordinator {
     this.widgetContainer.set('userTrackList', this.userTrackList);
     this.widgetContainer.set('searchResults', this.searchResults);
     this.widgetContainer.set('fullTrackList', this.fullTrackList);
-
 
     this.fullTrackList.setTracks(demoData);
     this.listenToElementsEvents();

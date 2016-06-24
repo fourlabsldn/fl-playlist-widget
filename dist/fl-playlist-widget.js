@@ -3243,10 +3243,20 @@ var constants = {
 var Track = function (_ViewController) {
   _inherits(Track, _ViewController);
 
+  /**
+   * @method constructor
+   * @param  {String} modulePrefix
+   * @param  {Object} info - Spotify song info object
+   * @param  {Boolean} rearrageable - whether the track can be rearranged
+   * @return {Track}
+   */
+
   function Track(modulePrefix, info) {
+    var rearrageable = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+
     _classCallCheck(this, Track);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Track).call(this, modulePrefix, info));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Track).call(this, modulePrefix, info, rearrageable));
 
     _this.info = info;
     Object.preventExtensions(_this);
@@ -3257,7 +3267,7 @@ var Track = function (_ViewController) {
 
   _createClass(Track, [{
     key: 'buildHtml',
-    value: function buildHtml(info) {
+    value: function buildHtml(info, rearrageable) {
       var _this2 = this;
 
       _get(Object.getPrototypeOf(Track.prototype), 'buildHtml', this).call(this);
@@ -3305,7 +3315,7 @@ var Track = function (_ViewController) {
         this.playingSign = playingSign;
         playingSign.innerHTML = constants.playIcon;
         buttonsBar.appendChild(playingSign);
-      } else {
+      } else if (rearrageable) {
         (function () {
           var dragBtn = document.createElement('button');
           dragBtn.innerHTML = constants.dragIcon;
@@ -3631,11 +3641,14 @@ var TrackList = function (_ViewController) {
   _inherits(TrackList, _ViewController);
 
   function TrackList(modulePrefix) {
+    var rearrageable = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+
     _classCallCheck(this, TrackList);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TrackList).call(this, modulePrefix));
 
     _this.tracks = [];
+    _this.rearrageable = rearrageable;
     Object.preventExtensions(_this);
 
     _this.acceptEvents('change');
@@ -3702,7 +3715,7 @@ var TrackList = function (_ViewController) {
     value: function addTrack(trackInfo) {
       var _this3 = this;
 
-      var newTrack = new Track(this.modulePrefix, trackInfo);
+      var newTrack = new Track(this.modulePrefix, trackInfo, this.rearrageable);
 
       newTrack.on('dragstart', function (track, e) {
         e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);
@@ -4491,7 +4504,7 @@ var ModuleCoordinator = function () {
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
     this.userTrackList = new TrackList(modulePrefix);
-    this.fullTrackList = new TrackList(modulePrefix);
+    this.fullTrackList = new TrackList(modulePrefix, false); // non-rearrageable
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
     Object.preventExtensions(this);

@@ -5,9 +5,10 @@ import trackReorderDrag from './utils/trackReorderDrag';
 import removeIndex from './utils/removeIndex';
 
 export default class TrackList extends ViewController {
-  constructor(modulePrefix) {
+  constructor(modulePrefix, rearrageable = true) {
     super(modulePrefix);
     this.tracks = [];
+    this.rearrageable = rearrageable;
     Object.preventExtensions(this);
 
     this.acceptEvents('change');
@@ -51,7 +52,7 @@ export default class TrackList extends ViewController {
    * @return {Track}
    */
   addTrack(trackInfo) {
-    const newTrack = new Track(this.modulePrefix, trackInfo);
+    const newTrack = new Track(this.modulePrefix, trackInfo, this.rearrageable);
 
     newTrack.on('dragstart', (track, e) => {
       e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);

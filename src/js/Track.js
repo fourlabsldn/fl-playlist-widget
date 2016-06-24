@@ -3,15 +3,22 @@ import constants from './utils/constants';
 
 export default class Track extends ViewController {
 
-  constructor(modulePrefix, info) {
-    super(modulePrefix, info);
+  /**
+   * @method constructor
+   * @param  {String} modulePrefix
+   * @param  {Object} info - Spotify song info object
+   * @param  {Boolean} rearrageable - whether the track can be rearranged
+   * @return {Track}
+   */
+  constructor(modulePrefix, info, rearrageable = true) {
+    super(modulePrefix, info, rearrageable);
     this.info = info;
     Object.preventExtensions(this);
 
     this.acceptEvents('dragstart', 'dragend', 'deleteBtnClick');
   }
 
-  buildHtml(info) {
+  buildHtml(info, rearrageable) {
     super.buildHtml();
 
     // Create HTML
@@ -57,7 +64,7 @@ export default class Track extends ViewController {
       this.playingSign = playingSign;
       playingSign.innerHTML = constants.playIcon;
       buttonsBar.appendChild(playingSign);
-    } else {
+    } else if (rearrageable) {
       const dragBtn = document.createElement('button');
       dragBtn.innerHTML = constants.dragIcon;
       dragBtn.setAttribute('draggable', 'true');
