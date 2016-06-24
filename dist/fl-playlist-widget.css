@@ -178,6 +178,18 @@
 .fl-pw_Track-btns-playingSign {
   pointer-events: none; }
 
+.fl-pw_Track-userName {
+  position: absolute;
+  bottom: 0;
+  right: 1em;
+  display: inline-block;
+  max-width: 19em;
+  font-weight: bold;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: .9em; }
+
 .fl-pw_SearchResults {
   width: 100%;
   background-color: #f9f9f9;

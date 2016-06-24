@@ -41,6 +41,7 @@ export default class ModuleCoordinator {
     this.listenToElementsEvents();
     // this.loadTracks();
     this.userTrackList.setTracks(demoData);
+    this.fullTrackList.setTracks(demoData);
   }
 
   /**
@@ -80,7 +81,6 @@ export default class ModuleCoordinator {
     });
 
     this.userTrackList.on('trackReorder', () => {
-      console.log('trackReorder');
       this.submitTracks();
     });
   }
@@ -115,7 +115,7 @@ export default class ModuleCoordinator {
    */
   addTrack(trackInfo) {
     // Add user credentials to track
-    trackInfo.user = { id: this.userId }; // eslint-disable-line no-param-reassign
+    trackInfo.user = { id: this.userId, name: 'Marcelo Lazaroni' }; // eslint-disable-line no-param-reassign
     this.userTrackList.addTrack(trackInfo);
     this.submitTracks();
   }
@@ -139,7 +139,7 @@ export default class ModuleCoordinator {
    */
   async loadTracks() {
     // await this.ajax.loadTracks.query({ tracks: currentTracks }, 'POST');
-    const loadedTracks = this.userTrackList.getTracks();
+    const loadedTracks = this.fullTrackList.getTracks(); // change this for the line above
 
     assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
     const userTracks = loadedTracks.filter(t => t.user.id === this.userId);

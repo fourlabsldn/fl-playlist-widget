@@ -1,5 +1,8 @@
 export default [{
-  "user": 2,
+  "user": {
+    "id": 2,
+    "name": "Marcelo Lazaroni de Rezende Junior"
+  },
   "album": {
     "album_type": "album",
     "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"],
@@ -54,7 +57,10 @@ export default [{
   "type": "track",
   "uri": "spotify:track:4i3txPQIUV4eC9g9FBpi9I"
 }, {
-  "user": 2,
+  "user": {
+    "id": 2,
+    "name": "Marcelo Lazaroni de Rezende Junior"
+  },
   "album": {
     "album_type": "album",
     "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"],
@@ -109,7 +115,10 @@ export default [{
   "type": "track",
   "uri": "spotify:track:7p1PhtGLjq0ISncRXBHqXY"
 }, {
-  "user": 2,
+  "user": {
+    "id": 2,
+    "name": "Marcelo Lazaroni de Rezende Junior"
+  },
   "album": {
     "album_type": "album",
     "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"],

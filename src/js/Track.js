@@ -97,6 +97,13 @@ export default class Track extends ViewController {
 
       deleteBtn.addEventListener('click', () => this.trigger('deleteBtnClick'));
     }
+
+    if (info.user.name) {
+      const userName = document.createElement('span');
+      userName.textContent = info.user.name;
+      userName.classList.add(`${this.cssPrefix}-userName`);
+      this.html.container.appendChild(userName);
+    }
   }
 
   /**

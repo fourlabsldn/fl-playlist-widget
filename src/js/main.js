@@ -8,6 +8,6 @@ xController((xdiv) => {
   const serverUrl = 'tesssst';
   const userId = 'abcde';
 
-  const coordinator = new ModuleCoordinator(MODULE_PREFIX);
+  const coordinator = new ModuleCoordinator(MODULE_PREFIX, 2);
   xdiv.appendChild(coordinator.getWidget());
 });

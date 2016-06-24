@@ -76,7 +76,6 @@ export default class TrackList extends ViewController {
         // Trigger change if elements were reordered
         const afterReordering = JSON.stringify(this.tracks);
         if (beforeReordering !== afterReordering) {
-          console.log('trackReorder');
           this.trigger('trackReorder');
         }
       });

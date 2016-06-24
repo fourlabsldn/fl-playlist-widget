@@ -3353,6 +3353,13 @@ var Track = function (_ViewController) {
           });
         })();
       }
+
+      if (info.user.name) {
+        var userName = document.createElement('span');
+        userName.textContent = info.user.name;
+        userName.classList.add(this.cssPrefix + '-userName');
+        this.html.container.appendChild(userName);
+      }
     }
 
     /**
@@ -3749,7 +3756,6 @@ var TrackList = function (_ViewController) {
           // Trigger change if elements were reordered
           var afterReordering = JSON.stringify(_this3.tracks);
           if (beforeReordering !== afterReordering) {
-            console.log('trackReorder');
             _this3.trigger('trackReorder');
           }
         });
@@ -4517,7 +4523,10 @@ function debounce(wait, func, immediate) {
 }
 
 var demoData = [{
-  "user": 2,
+  "user": {
+    "id": 2,
+    "name": "Marcelo Lazaroni de Rezende Junior"
+  },
   "album": {
     "album_type": "album",
     "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"],
@@ -4572,7 +4581,10 @@ var demoData = [{
   "type": "track",
   "uri": "spotify:track:4i3txPQIUV4eC9g9FBpi9I"
 }, {
-  "user": 2,
+  "user": {
+    "id": 2,
+    "name": "Marcelo Lazaroni de Rezende Junior"
+  },
   "album": {
     "album_type": "album",
     "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"],
@@ -4627,7 +4639,10 @@ var demoData = [{
   "type": "track",
   "uri": "spotify:track:7p1PhtGLjq0ISncRXBHqXY"
 }, {
-  "user": 2,
+  "user": {
+    "id": 2,
+    "name": "Marcelo Lazaroni de Rezende Junior"
+  },
   "album": {
     "album_type": "album",
     "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"],
@@ -4710,6 +4725,7 @@ var ModuleCoordinator = function () {
     this.listenToElementsEvents();
     // this.loadTracks();
     this.userTrackList.setTracks(demoData);
+    this.fullTrackList.setTracks(demoData);
   }
 
   /**
@@ -4793,7 +4809,6 @@ var ModuleCoordinator = function () {
       });
 
       this.userTrackList.on('trackReorder', function () {
-        console.log('trackReorder');
         _this.submitTracks();
       });
     }
@@ -4839,7 +4854,7 @@ var ModuleCoordinator = function () {
     key: 'addTrack',
     value: function addTrack(trackInfo) {
       // Add user credentials to track
-      trackInfo.user = { id: this.userId }; // eslint-disable-line no-param-reassign
+      trackInfo.user = { id: this.userId, name: 'Marcelo Lazaroni' }; // eslint-disable-line no-param-reassign
       this.userTrackList.addTrack(trackInfo);
       this.submitTracks();
     }
@@ -4899,8 +4914,7 @@ var ModuleCoordinator = function () {
             switch (_context4.prev = _context4.next) {
               case 0:
                 // await this.ajax.loadTracks.query({ tracks: currentTracks }, 'POST');
-                loadedTracks = this.userTrackList.getTracks();
-
+                loadedTracks = this.fullTrackList.getTracks(); // change this for the line above
 
                 assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
                 userTracks = loadedTracks.filter(function (t) {
@@ -4996,7 +5010,7 @@ xController(function (xdiv) {
   var serverUrl = 'tesssst';
   var userId = 'abcde';
 
-  var coordinator = new ModuleCoordinator(MODULE_PREFIX);
+  var coordinator = new ModuleCoordinator(MODULE_PREFIX, 2);
   xdiv.appendChild(coordinator.getWidget());
 });
 }());
