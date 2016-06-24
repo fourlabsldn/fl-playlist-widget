@@ -25,12 +25,14 @@
   fill: #222; }
 
 .fl-pw_WidgetContainer-info {
+  display: none;
   padding: 5px;
-  width: 100%;
-  display: inline-block; }
+  width: 100%; }
   .fl-pw_WidgetContainer-info--success {
+    display: block;
     color: #42b382; }
   .fl-pw_WidgetContainer-info--error {
+    display: block;
     color: #e4585b; }
 
 .fl-pw_WidgetContainer-tracksContainer {
@@ -55,17 +57,19 @@
       -ms-flex-line-pack: stretch;
           align-content: stretch;
   list-style: none;
-  padding: 0; }
+  padding: 0;
+  margin: 0 0 .3em; }
 
 .fl-pw_WidgetContainer-tabs-label {
-  padding: 1em;
+  padding: .2em 1em .4em;
   cursor: pointer; }
   .fl-pw_WidgetContainer-tabs-label--selected {
     background-color: #e0e0e0; }
 
 .fl-pw_WidgetContainer-tabs-contents {
   list-style: none;
-  padding: 0; }
+  padding: 0;
+  margin: 0; }
 
 .fl-pw_WidgetContainer-tabs-content {
   display: none; }

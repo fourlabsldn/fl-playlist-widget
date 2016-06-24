@@ -4158,11 +4158,6 @@ var WidgetContainer = function (_ViewController) {
       info.classList.add(this.cssPrefix + '-info');
       this.html.container.appendChild(info);
 
-      var loadingIndicator = document.createElement('span');
-      this.html.loadingIndicator = loadingIndicator;
-      loadingIndicator.classList.add(this.cssPrefix + '-loadingIndicator');
-      this.html.container.appendChild(loadingIndicator);
-
       var mySongsTab = document.createElement('div');
 
       var searchBox = document.createElement('span');
