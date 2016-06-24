@@ -27,18 +27,18 @@ export default class WidgetContainer extends ViewController {
     tracksContainer.classList.add(`${this.cssPrefix}-tracksContainer`);
     mySongsTab.appendChild(tracksContainer);
 
-    const trackList = document.createElement('div');
-    this.html.trackList = trackList;
-    trackList.classList.add(`${this.cssPrefix}-trackList`);
-    tracksContainer.appendChild(trackList);
+    const userTrackList = document.createElement('div');
+    this.html.userTrackList = userTrackList;
+    userTrackList.classList.add(`${this.cssPrefix}-trackList`);
+    tracksContainer.appendChild(userTrackList);
 
     const searchResults = document.createElement('div');
     this.html.searchResults = searchResults;
     searchResults.classList.add(`${this.cssPrefix}-searchResults`);
     tracksContainer.appendChild(searchResults);
 
-    const fullPlaylistTab = document.createElement('p');
-    fullPlaylistTab.innerHTML = 'Imagine a full playlist';
+    const fullPlaylistTab = document.createElement('div');
+    this.html.fullTrackList = fullPlaylistTab;
 
     const tabs = this.createTabs(
       ['My songs', 'Full Playlist'],
@@ -48,6 +48,14 @@ export default class WidgetContainer extends ViewController {
     this.html.container.appendChild(tabs);
   }
 
+  /**
+   * Creates tabs given titles and contents
+   * @private
+   * @method createTabs
+   * @param  {Array<String>} labels - Tab titles
+   * @param  {Array<HTMLElements>} contents
+   * @return {HTMLElement}
+   */
   createTabs(labels, contents) {
     assert(labels.length === contents.length,
       `Invalid arguments. tabLabels of size ${labels.length} and tabContents of size ${contents.length}`); // eslint-disable-line max-len

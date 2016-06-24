@@ -5,13 +5,15 @@ import WidgetContainer from './WidgetContainer';
 import Ajax from './utils/Ajax';
 import assert from 'fl-assert';
 import debounce from './utils/debounce';
+import demoData from './utils/demoData';
 
 export default class ModuleCoordinator {
   constructor(modulePrefix, userId) {
     this.userId = userId;
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
-    this.trackList = new TrackList(modulePrefix);
+    this.userTrackList = new TrackList(modulePrefix);
+    this.fullTrackList = new TrackList(modulePrefix);
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
     Object.preventExtensions(this);
@@ -32,9 +34,12 @@ export default class ModuleCoordinator {
     );
 
     this.widgetContainer.set('searchBox', this.searchBox);
-    this.widgetContainer.set('trackList', this.trackList);
+    this.widgetContainer.set('userTrackList', this.userTrackList);
     this.widgetContainer.set('searchResults', this.searchResults);
+    this.widgetContainer.set('fullTrackList', this.fullTrackList);
 
+
+    this.fullTrackList.setTracks(demoData);
     this.listenToElementsEvents();
     this.loadChosenTracks();
   }
@@ -104,7 +109,7 @@ export default class ModuleCoordinator {
    * @param  {Object} trackInfo
    */
   addTrack(trackInfo) {
-    this.trackList.addTrack(trackInfo);
+    this.userTrackList.addTrack(trackInfo);
     this.submitTracks();
   }
 
@@ -115,7 +120,7 @@ export default class ModuleCoordinator {
    * @return {void}
    */
   async submitTracks() {
-    const currentTracks = this.trackList.getTracks();
+    const currentTracks = this.userTrackList.getTracks();
     // await this.ajax.trackSubmission.query({ tracks: currentTracks }, 'POST');
     await this.loadChosenTracks();
   }
@@ -127,8 +132,8 @@ export default class ModuleCoordinator {
    */
   async loadChosenTracks() {
     // await this.ajax.loadTracks.query({ tracks: currentTracks }, 'POST');
-    const demoTracks = this.trackList.getTracks();
-    this.trackList.setTracks(demoTracks);
+    const demoTracks = this.userTrackList.getTracks();
+    this.userTrackList.setTracks(demoTracks);
   }
 
 
