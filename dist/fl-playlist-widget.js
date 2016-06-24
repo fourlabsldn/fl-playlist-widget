@@ -3654,14 +3654,15 @@ function removeIndex(arr, index) {
 var TrackList = function (_ViewController) {
   _inherits(TrackList, _ViewController);
 
-  function TrackList(modulePrefix) {
-    var rearrageable = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+  function TrackList(modulePrefix, userId) {
+    var rearrageable = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
     _classCallCheck(this, TrackList);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TrackList).call(this, modulePrefix));
 
     _this.tracks = [];
+    _this.userId = userId;
     _this.rearrageable = rearrageable;
     Object.preventExtensions(_this);
 
@@ -3730,6 +3731,10 @@ var TrackList = function (_ViewController) {
       var _this3 = this;
 
       var newTrack = new Track(this.modulePrefix, trackInfo, this.rearrageable);
+
+      if (trackInfo.user && trackInfo.user.id === this.userId) {
+        newTrack.getContainer().classList.add(newTrack.cssPrefix + '--userTrack');
+      }
 
       newTrack.on('dragstart', function (track, e) {
         e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);
@@ -4221,7 +4226,11 @@ var WidgetContainer = function (_ViewController) {
       tracksContainer.appendChild(searchResults);
 
       var fullPlaylistTab = document.createElement('div');
-      this.html.fullTrackList = fullPlaylistTab;
+      fullPlaylistTab.classList.add(this.cssPrefix + '-fullPlaylistTab');
+
+      var fullTrackList = document.createElement('div');
+      fullPlaylistTab.appendChild(fullTrackList);
+      this.html.fullTrackList = fullTrackList;
 
       var tabs = this.createTabs(['My songs', 'Full Playlist'], [mySongsTab, fullPlaylistTab]);
 
@@ -4525,7 +4534,7 @@ function debounce(wait, func, immediate) {
 var demoData = [{
   "user": {
     "id": 2,
-    "name": "Marcelo Lazaroni de Rezende Junior"
+    "name": "Marcelo Lazaroni"
   },
   "album": {
     "album_type": "album",
@@ -4582,8 +4591,8 @@ var demoData = [{
   "uri": "spotify:track:4i3txPQIUV4eC9g9FBpi9I"
 }, {
   "user": {
-    "id": 2,
-    "name": "Marcelo Lazaroni de Rezende Junior"
+    "id": 3,
+    "name": "Jonny Schmid"
   },
   "album": {
     "album_type": "album",
@@ -4640,8 +4649,8 @@ var demoData = [{
   "uri": "spotify:track:7p1PhtGLjq0ISncRXBHqXY"
 }, {
   "user": {
-    "id": 2,
-    "name": "Marcelo Lazaroni de Rezende Junior"
+    "id": 3,
+    "name": "Jonny Schmid"
   },
   "album": {
     "album_type": "album",
@@ -4705,8 +4714,8 @@ var ModuleCoordinator = function () {
     this.userId = userId;
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
-    this.userTrackList = new TrackList(modulePrefix);
-    this.fullTrackList = new TrackList(modulePrefix, false); // non-rearrageable
+    this.userTrackList = new TrackList(modulePrefix, userId);
+    this.fullTrackList = new TrackList(modulePrefix, userId, false); // non-rearrageable
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
     Object.preventExtensions(this);

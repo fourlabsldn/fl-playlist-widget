@@ -12,8 +12,8 @@ export default class ModuleCoordinator {
     this.userId = userId;
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
-    this.userTrackList = new TrackList(modulePrefix);
-    this.fullTrackList = new TrackList(modulePrefix, false); // non-rearrageable
+    this.userTrackList = new TrackList(modulePrefix, userId);
+    this.fullTrackList = new TrackList(modulePrefix, userId, false); // non-rearrageable
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
     Object.preventExtensions(this);

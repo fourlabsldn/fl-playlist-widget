@@ -1,7 +1,7 @@
 export default [{
   "user": {
     "id": 2,
-    "name": "Marcelo Lazaroni de Rezende Junior"
+    "name": "Marcelo Lazaroni"
   },
   "album": {
     "album_type": "album",
@@ -58,8 +58,8 @@ export default [{
   "uri": "spotify:track:4i3txPQIUV4eC9g9FBpi9I"
 }, {
   "user": {
-    "id": 2,
-    "name": "Marcelo Lazaroni de Rezende Junior"
+    "id": 3,
+    "name": "Jonny Schmid"
   },
   "album": {
     "album_type": "album",
@@ -116,8 +116,8 @@ export default [{
   "uri": "spotify:track:7p1PhtGLjq0ISncRXBHqXY"
 }, {
   "user": {
-    "id": 2,
-    "name": "Marcelo Lazaroni de Rezende Junior"
+    "id": 3,
+    "name": "Jonny Schmid"
   },
   "album": {
     "album_type": "album",

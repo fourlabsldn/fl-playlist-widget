@@ -57,3 +57,14 @@
     display: block;
   }
 }
+
+.fl-pw_WidgetContainer-fullPlaylistTab {
+  .fl-pw_Track {
+    filter: grayscale(70%);
+  }
+
+  &:hover .fl-pw_Track,
+  .fl-pw_Track--userTrack {
+    filter: none;
+  }
+}

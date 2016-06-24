@@ -76,6 +76,15 @@
   .fl-pw_WidgetContainer-tabs-content--visible {
     display: block; }
 
+.fl-pw_WidgetContainer-fullPlaylistTab .fl-pw_Track {
+  -webkit-filter: grayscale(70%);
+          filter: grayscale(70%); }
+
+.fl-pw_WidgetContainer-fullPlaylistTab:hover .fl-pw_Track,
+.fl-pw_WidgetContainer-fullPlaylistTab .fl-pw_Track--userTrack {
+  -webkit-filter: none;
+          filter: none; }
+
 .fl-pw_TrackList {
   display: -webkit-box;
   display: -webkit-flex;

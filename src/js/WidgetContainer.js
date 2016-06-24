@@ -38,7 +38,11 @@ export default class WidgetContainer extends ViewController {
     tracksContainer.appendChild(searchResults);
 
     const fullPlaylistTab = document.createElement('div');
-    this.html.fullTrackList = fullPlaylistTab;
+    fullPlaylistTab.classList.add(`${this.cssPrefix}-fullPlaylistTab`);
+
+    const fullTrackList = document.createElement('div');
+    fullPlaylistTab.appendChild(fullTrackList);
+    this.html.fullTrackList = fullTrackList;
 
     const tabs = this.createTabs(
       ['My songs', 'Full Playlist'],
