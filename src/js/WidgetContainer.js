@@ -21,14 +21,16 @@ export default class WidgetContainer extends ViewController {
     loadingIndicator.classList.add(`${this.cssPrefix}-loadingIndicator`);
     this.html.container.appendChild(loadingIndicator);
 
+    const mySongsTab = document.createElement('div');
+
     const searchBox = document.createElement('span');
     this.html.searchBox = searchBox;
-    this.html.container.appendChild(searchBox);
+    mySongsTab.appendChild(searchBox);
 
     const tracksContainer = document.createElement('div');
     this.html.tracksContainer = tracksContainer;
     tracksContainer.classList.add(`${this.cssPrefix}-tracksContainer`);
-    this.html.container.appendChild(tracksContainer);
+    mySongsTab.appendChild(tracksContainer);
 
     const trackList = document.createElement('div');
     this.html.trackList = trackList;
@@ -39,6 +41,63 @@ export default class WidgetContainer extends ViewController {
     this.html.searchResults = searchResults;
     searchResults.classList.add(`${this.cssPrefix}-searchResults`);
     tracksContainer.appendChild(searchResults);
+
+    const fullPlaylistTab = document.createElement('p');
+    fullPlaylistTab.innerHTML = 'Imagine a full playlist';
+
+    const tabs = this.createTabs(
+      ['My songs', 'Full Playlist'],
+      [mySongsTab, fullPlaylistTab]
+    );
+
+    this.html.container.appendChild(tabs);
+  }
+
+  createTabs(labels, contents) {
+    assert(labels.length === contents.length,
+      `Invalid arguments. tabLabels of size ${labels.length} and tabContents of size ${contents.length}`); // eslint-disable-line max-len
+    const tabsClass = `${this.cssPrefix}-tabs`;
+    const labelClass = `${tabsClass}-tab`;
+    const labelSelectedClass = `${tabsClass}--selected`;
+    const tabClass = `${tabsClass}-label`;
+    const tabVisibleClass = `${tabsClass}--visible`;
+
+    const tabsContainer = document.createElement('div');
+    tabsContainer.classList.add(tabsClass);
+
+    const tabLabels = document.createElement('ul');
+    tabLabels.classList.add(`${tabsClass}-tabLabels`);
+    tabsContainer.appendChild(tabLabels);
+
+    const tabContents = document.createElement('ul');
+    tabContents.classList.add(`${tabsClass}-tabContents`);
+    tabsContainer.appendChild(tabContents);
+
+    function showTab(tabIndex) {
+      const labelElements = Array.from(tabLabels.children);
+      labelElements.forEach(l => l.classList.remove(labelSelectedClass));
+      labelElements[tabIndex].classList.add(labelSelectedClass);
+
+      const contentElements = Array.from(tabContents.children);
+      contentElements.forEach(t => t.classList.remove(tabVisibleClass));
+      contentElements[tabIndex].classList.add(tabVisibleClass);
+    }
+
+    // Create elements
+    for (let i = 0; i < contents.length; i++) {
+      const tabLabel = document.createElement('li');
+      tabLabel.classList.add(labelClass);
+      tabLabel.innerHTML = labels[i];
+      tabLabels.appendChild(tabLabel);
+      tabLabel.addEventListener('click', () => showTab(i));
+
+      const tabContent = document.createElement('li');
+      tabContent.classList.add(tabClass);
+      tabContent.appendChild(contents[i]);
+      tabContents.appendChild(tabContent);
+    }
+
+    return tabsContainer;
   }
 
   /**
