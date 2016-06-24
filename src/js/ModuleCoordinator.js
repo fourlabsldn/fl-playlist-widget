@@ -39,9 +39,7 @@ export default class ModuleCoordinator {
     this.widgetContainer.set('fullTrackList', this.fullTrackList);
 
     this.listenToElementsEvents();
-    // this.loadTracks();
-    this.userTrackList.setTracks(demoData);
-    this.fullTrackList.setTracks(demoData);
+    this.loadTracks();
   }
 
   /**
@@ -139,7 +137,7 @@ export default class ModuleCoordinator {
    */
   async loadTracks() {
     // await this.ajax.loadTracks.query({ tracks: currentTracks }, 'POST');
-    const loadedTracks = this.fullTrackList.getTracks(); // change this for the line above
+    const loadedTracks =  demoData // change this for the line above
 
     assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
     const userTracks = loadedTracks.filter(t => t.user.id === this.userId);
