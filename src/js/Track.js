@@ -87,7 +87,12 @@ export default class Track extends ViewController {
 
       dragBtn.addEventListener('dragend', (e) => {
         this.trigger('dragend', e);
-        setTimeout(() => this.html.container.classList.remove(draggingClass), 100);
+        setTimeout(() => {
+          // Protect against destroyed track
+          if (this.html && this.html.container) {
+            this.html.container.classList.remove(draggingClass);
+          }
+        }, 100);
       });
 
       deleteBtn.addEventListener('click', () => this.trigger('deleteBtnClick'));

@@ -74,6 +74,7 @@ export default class ViewController {
 
   destroy() {
     this.trigger('destroy');
+    this.html.container.classList.add('DESTROYED');
     this.html.container.remove();
     const keys = Object.keys(this);
     for (const key of keys) {

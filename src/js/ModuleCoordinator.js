@@ -38,9 +38,9 @@ export default class ModuleCoordinator {
     this.widgetContainer.set('searchResults', this.searchResults);
     this.widgetContainer.set('fullTrackList', this.fullTrackList);
 
-    this.fullTrackList.setTracks(demoData);
     this.listenToElementsEvents();
-    this.loadChosenTracks();
+    // this.loadTracks();
+    this.userTrackList.setTracks(demoData);
   }
 
   /**
@@ -78,6 +78,11 @@ export default class ModuleCoordinator {
     this.searchResults.on('resultClick', (el, trackInfo) => {
       this.addTrack(trackInfo);
     });
+
+    this.userTrackList.on('trackReorder', () => {
+      console.log('trackReorder');
+      this.submitTracks();
+    });
   }
 
   /**
@@ -103,11 +108,14 @@ export default class ModuleCoordinator {
   }
 
   /**
+   * Adds a track to the user list and trigger tracks update.
    * @private
    * @method addTrack
    * @param  {Object} trackInfo
    */
   addTrack(trackInfo) {
+    // Add user credentials to track
+    trackInfo.user = { id: this.userId }; // eslint-disable-line no-param-reassign
     this.userTrackList.addTrack(trackInfo);
     this.submitTracks();
   }
@@ -121,18 +129,22 @@ export default class ModuleCoordinator {
   async submitTracks() {
     const currentTracks = this.userTrackList.getTracks();
     // await this.ajax.trackSubmission.query({ tracks: currentTracks }, 'POST');
-    await this.loadChosenTracks();
+    await this.loadTracks();
   }
 
   /**
    * Loads tracks form the server
-   * @method loadChosenTracks
+   * @method loadTracks
    * @return {tracks}
    */
-  async loadChosenTracks() {
+  async loadTracks() {
     // await this.ajax.loadTracks.query({ tracks: currentTracks }, 'POST');
-    const demoTracks = this.userTrackList.getTracks();
-    this.userTrackList.setTracks(demoTracks);
+    const loadedTracks = this.userTrackList.getTracks();
+
+    assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
+    const userTracks = loadedTracks.filter(t => t.user.id === this.userId);
+    this.userTrackList.setTracks(userTracks);
+    this.fullTrackList.setTracks(loadedTracks);
   }
 
 

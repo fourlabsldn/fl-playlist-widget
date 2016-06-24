@@ -3194,6 +3194,7 @@ var ViewController = function () {
     key: 'destroy',
     value: function destroy() {
       this.trigger('destroy');
+      this.html.container.classList.add('DESTROYED');
       this.html.container.remove();
       var keys = Object.keys(this);
       var _iteratorNormalCompletion2 = true;
@@ -3340,7 +3341,10 @@ var Track = function (_ViewController) {
           dragBtn.addEventListener('dragend', function (e) {
             _this2.trigger('dragend', e);
             setTimeout(function () {
-              return _this2.html.container.classList.remove(draggingClass);
+              // Protect against destroyed track
+              if (_this2.html && _this2.html.container) {
+                _this2.html.container.classList.remove(draggingClass);
+              }
             }, 100);
           });
 
@@ -3415,215 +3419,218 @@ function throttle(FuncDelay, callback) {
  * @param  {event} paramE        The dragstart event, from which this should be called.
  * @param  {HTMLElement} paramEl       The main Element being dragged
  * @param  {Array<HTMLElement>} paramElements Array of elements to be tracked.
- * @return {void}
+ * @return {Promise} - Will be resolved after elements have been reordered.
  */
 function trackReorderDrag(paramE, paramEl, paramElements) {
-  function setTranslation(el, val) {
-    el.style.transform = 'translate3d(0, ' + val + 'px, 0)'; //  eslint-disable-line no-param-reassign
-  }
-
-  /**
-   * @function resetElementsPositions
-   * @param {Array<HTMLElement>} els Elements being tracked
-   */
-  function resetElementsPositions(els) {
-    els.forEach(function (el) {
-      setTranslation(el, 0);
-    });
-  }
-
-  /**
-   * @function calculateElementHeight
-   * @param  {Array<HTMLElement>} els    Elements ordered by vertical position
-   * @param  {Integer} elIndex
-   * @return {void}
-   */
-  function calculateElementHeight(els, elIndex) {
-    var spaceOccupied = void 0;
-
-    // If not the last element
-    if (elIndex < els.length - 1) {
-      var elTop = els[elIndex].getBoundingClientRect().top;
-      var nextElTop = els[elIndex + 1].getBoundingClientRect().top;
-      spaceOccupied = nextElTop - elTop;
-    } else {
-      // let's estimate the general vertical distance between elements by
-      // subtracting the size of the first element from the distance between
-      // its top and the next element.
-      var firstElSpaceOccupied = els[1].getBoundingClientRect().top - els[0].getBoundingClientRect().top;
-      var verticalDistance = firstElSpaceOccupied - els[0].clientHeight;
-      var height = els[elIndex].clientHeight;
-      spaceOccupied = height + verticalDistance;
+  return new Promise(function (resolve) {
+    function setTranslation(el, val) {
+      el.style.transform = 'translate3d(0, ' + val + 'px, 0)'; //  eslint-disable-line no-param-reassign
     }
 
-    return spaceOccupied;
-  }
+    /**
+     * @function resetElementsPositions
+     * @param {Array<HTMLElement>} els Elements being tracked
+     */
+    function resetElementsPositions(els) {
+      els.forEach(function (el) {
+        setTranslation(el, 0);
+      });
+    }
 
-  /**
-   * @function createDragMover
-   * @param  {Array<HTMLElement>} els
-   * @param  {Array<Integer>} tops        Initial tops
-   * @param  {Integer} targetIndex Index of element being dragged around
-   * @return {function}             The function to translate elements in the
-   *                                  list to make room for the dragged element
-   */
-  function createDragMover(els, tops, targetIndex) {
-    var target = els[targetIndex];
-    var targetInitialTop = tops[targetIndex];
-    var targetHeight = calculateElementHeight(els, targetIndex);
-    return function doDragMove() {
-      var targetTop = target.getBoundingClientRect().top;
-      var movedUp = targetTop < targetInitialTop;
+    /**
+     * @function calculateElementHeight
+     * @param  {Array<HTMLElement>} els    Elements ordered by vertical position
+     * @param  {Integer} elIndex
+     * @return {void}
+     */
+    function calculateElementHeight(els, elIndex) {
+      var spaceOccupied = void 0;
 
-      var i = void 0;
-      for (i = 0; i < tops.length; i++) {
-        if (i === targetIndex) {
-          continue;
-        } else if (!movedUp && targetTop > tops[i] && tops[i] > targetInitialTop) {
-          setTranslation(els[i], -targetHeight);
-        } else if (movedUp && targetTop < tops[i + 1] && tops[i] < targetInitialTop) {
-          setTranslation(els[i], targetHeight);
-        } else {
-          setTranslation(els[i], 0);
+      // If not the last element
+      if (elIndex < els.length - 1) {
+        var elTop = els[elIndex].getBoundingClientRect().top;
+        var nextElTop = els[elIndex + 1].getBoundingClientRect().top;
+        spaceOccupied = nextElTop - elTop;
+      } else {
+        // let's estimate the general vertical distance between elements by
+        // subtracting the size of the first element from the distance between
+        // its top and the next element.
+        var firstElSpaceOccupied = els[1].getBoundingClientRect().top - els[0].getBoundingClientRect().top;
+        var verticalDistance = firstElSpaceOccupied - els[0].clientHeight;
+        var height = els[elIndex].clientHeight;
+        spaceOccupied = height + verticalDistance;
+      }
+
+      return spaceOccupied;
+    }
+
+    /**
+     * @function createDragMover
+     * @param  {Array<HTMLElement>} els
+     * @param  {Array<Integer>} tops        Initial tops
+     * @param  {Integer} targetIndex Index of element being dragged around
+     * @return {function}             The function to translate elements in the
+     *                                  list to make room for the dragged element
+     */
+    function createDragMover(els, tops, targetIndex) {
+      var target = els[targetIndex];
+      var targetInitialTop = tops[targetIndex];
+      var targetHeight = calculateElementHeight(els, targetIndex);
+      return function doDragMove() {
+        var targetTop = target.getBoundingClientRect().top;
+        var movedUp = targetTop < targetInitialTop;
+
+        var i = void 0;
+        for (i = 0; i < tops.length; i++) {
+          if (i === targetIndex) {
+            continue;
+          } else if (!movedUp && targetTop > tops[i] && tops[i] > targetInitialTop) {
+            setTranslation(els[i], -targetHeight);
+          } else if (movedUp && targetTop < tops[i + 1] && tops[i] < targetInitialTop) {
+            setTranslation(els[i], targetHeight);
+          } else {
+            setTranslation(els[i], 0);
+          }
         }
+      };
+    }
+
+    function createDragListener(els, tops, targetIndex, initialY) {
+      var target = els[targetIndex];
+      var doDragMove = createDragMover(els, tops, targetIndex);
+      var shouldStopListening = void 0;
+      function dragListener(e) {
+        if (shouldStopListening) {
+          return;
+        }
+
+        doDragMove();
+        var newY = e.pageY;
+        if (newY === 0) {
+          return;
+        } // correct weird behaviour when mouse goes up
+
+        var diff = newY - initialY;
+        setTranslation(target, diff);
       }
-    };
-  }
 
-  function createDragListener(els, tops, targetIndex, initialY) {
-    var target = els[targetIndex];
-    var doDragMove = createDragMover(els, tops, targetIndex);
-    var shouldStopListening = void 0;
-    function dragListener(e) {
-      if (shouldStopListening) {
-        return;
-      }
+      dragListener.stop = function () {
+        shouldStopListening = true;
+      };
 
-      doDragMove();
-      var newY = e.pageY;
-      if (newY === 0) {
-        return;
-      } // correct weird behaviour when mouse goes up
-
-      var diff = newY - initialY;
-      setTranslation(target, diff);
+      return dragListener;
     }
 
-    dragListener.stop = function () {
-      shouldStopListening = true;
-    };
-
-    return dragListener;
-  }
-
-  function getElementsCurrentTop(els) {
-    var tops = [];
-    els.forEach(function (el) {
-      tops.push(el.getBoundingClientRect().top);
-    });
-
-    return tops;
-  }
-
-  // function adjustElementsToTops(els, tops) {
-  //   const currentTops = getElementsCurrentTop(els);
-  //   els.forEach(function (el, i) {
-  //     const diff =  currentTops[i] - tops[i];
-  //     setTranslation(el, diff);
-  //   });
-  // }
-
-  function insertTargetInRightPlace(els, initialTops, targetIndex) {
-    var target = els[targetIndex];
-    var topsBeforeInsertion = getElementsCurrentTop(els);
-    var targetTop = topsBeforeInsertion[targetIndex];
-    var i = 0;
-
-    // Pass by all elements that are above the target
-    while (topsBeforeInsertion[i] && topsBeforeInsertion[i] < targetTop || i === targetIndex) {
-      i++;
-    }
-
-    // Take away transitions from all elements and save them
-    var initialTransitions = [];
-    els.forEach(function (anEl) {
-      initialTransitions.push(anEl.style.transition);
-      anEl.style.transition = 'none'; // eslint-disable-line no-param-reassign
-    });
-
-    // Put everyone at translate3d(0,0,0) without transitions
-    resetElementsPositions(els);
-
-    // Add the element in the appropriate place. This will displace everyone else.
-    var parent = els[i] ? els[i].parentElement : els[els.length - 1].parentElement;
-    if (!parent || !parent.appendChild) {
-      throw new Error('trackReorderDrag(): No parent found in element list.');
-    } else if (els[i]) {
-      parent.insertBefore(target, els[i]);
-    } else {
-      var lastEl = els[els.length - 1];
-      parent.insertBefore(target, lastEl);
-      parent.insertBefore(lastEl, target);
-    }
-
-    // Now let's translate it to where it was just before it was repositioned
-    // All without transitions. It will seem like it never left that spot.
-    var futureTop = target.getBoundingClientRect().top;
-    var displacement = targetTop - futureTop;
-    setTranslation(target, displacement);
-
-    // Let's add a timeout to get the last place in the UI queue and let the
-    // CSS renderer to process the fact that all these elements do not have
-    // transitions and should appear wherever their coordinates say immediately.
-    setTimeout(function () {
-      // Restore all transitions
-      els.forEach(function (anEl, k) {
-        anEl.style.transition = initialTransitions[k]; // eslint-disable-line no-param-reassign
+    function getElementsCurrentTop(els) {
+      var tops = [];
+      els.forEach(function (el) {
+        tops.push(el.getBoundingClientRect().top);
       });
 
-      // Now transition the target can transition smoothly from where it
-      // was dropped to its final position at translate value 0.
-      setTranslation(target, 0);
-    }, 15);
-
-    //  adjustElementsToTops(els, topsBeforeInsertion);
-  }
-
-  function init(e, el, elements) {
-    if ((typeof el === 'undefined' ? 'undefined' : _typeof$1(el)) !== 'object') {
-      throw new Error('trackReorderDrag(): Invalid parameter');
+      return tops;
     }
 
-    // Reorder elements
-    elements.sort(function (el1, el2) {
-      return el1.getBoundingClientRect().top > el2.getBoundingClientRect().top;
-    });
+    // function adjustElementsToTops(els, tops) {
+    //   const currentTops = getElementsCurrentTop(els);
+    //   els.forEach(function (el, i) {
+    //     const diff =  currentTops[i] - tops[i];
+    //     setTranslation(el, diff);
+    //   });
+    // }
 
-    // Set initial states
-    var initialTops = [];
-    elements.forEach(function (element) {
-      initialTops.push(element.getBoundingClientRect().top);
-    });
+    function insertTargetInRightPlace(els, initialTops, targetIndex) {
+      var target = els[targetIndex];
+      var topsBeforeInsertion = getElementsCurrentTop(els);
+      var targetTop = topsBeforeInsertion[targetIndex];
+      var i = 0;
 
-    var elIndex = elements.indexOf(el);
+      // Pass by all elements that are above the target
+      while (topsBeforeInsertion[i] && topsBeforeInsertion[i] < targetTop || i === targetIndex) {
+        i++;
+      }
 
-    // Create throttled drag listener
-    var initialY = e.pageY;
-    var dragListener = createDragListener(elements, initialTops, elIndex, initialY);
-    var throttledDragListener = throttle(50, dragListener);
+      // Take away transitions from all elements and save them
+      var initialTransitions = [];
+      els.forEach(function (anEl) {
+        initialTransitions.push(anEl.style.transition);
+        anEl.style.transition = 'none'; // eslint-disable-line no-param-reassign
+      });
 
-    // Listen to drags
-    var eventTarget = e.target;
-    eventTarget.addEventListener('drag', throttledDragListener);
-    eventTarget.addEventListener('dragend', function dragEndListener() {
-      dragListener.stop();
-      insertTargetInRightPlace(elements, initialTops, elIndex);
-      eventTarget.removeEventListener('drag', throttledDragListener);
-      eventTarget.removeEventListener('dragend', dragEndListener);
-    });
-  }
+      // Put everyone at translate3d(0,0,0) without transitions
+      resetElementsPositions(els);
 
-  init(paramE, paramEl, paramElements);
+      // Add the element in the appropriate place. This will displace everyone else.
+      var parent = els[i] ? els[i].parentElement : els[els.length - 1].parentElement;
+      if (!parent || !parent.appendChild) {
+        throw new Error('trackReorderDrag(): No parent found in element list.');
+      } else if (els[i]) {
+        parent.insertBefore(target, els[i]);
+      } else {
+        var lastEl = els[els.length - 1];
+        parent.insertBefore(target, lastEl);
+        parent.insertBefore(lastEl, target);
+      }
+
+      // Now let's translate it to where it was just before it was repositioned
+      // All without transitions. It will seem like it never left that spot.
+      var futureTop = target.getBoundingClientRect().top;
+      var displacement = targetTop - futureTop;
+      setTranslation(target, displacement);
+
+      // Let's add a timeout to get the last place in the UI queue and let the
+      // CSS renderer to process the fact that all these elements do not have
+      // transitions and should appear wherever their coordinates say immediately.
+      setTimeout(function () {
+        // Restore all transitions
+        els.forEach(function (anEl, k) {
+          anEl.style.transition = initialTransitions[k]; // eslint-disable-line no-param-reassign
+        });
+
+        // Now transition the target can transition smoothly from where it
+        // was dropped to its final position at translate value 0.
+        setTranslation(target, 0);
+      }, 15);
+
+      //  adjustElementsToTops(els, topsBeforeInsertion);
+    }
+
+    function init(e, el, elements) {
+      if ((typeof el === 'undefined' ? 'undefined' : _typeof$1(el)) !== 'object') {
+        throw new Error('trackReorderDrag(): Invalid parameter');
+      }
+
+      // Reorder elements
+      elements.sort(function (el1, el2) {
+        return el1.getBoundingClientRect().top > el2.getBoundingClientRect().top;
+      });
+
+      // Set initial states
+      var initialTops = [];
+      elements.forEach(function (element) {
+        initialTops.push(element.getBoundingClientRect().top);
+      });
+
+      var elIndex = elements.indexOf(el);
+
+      // Create throttled drag listener
+      var initialY = e.pageY;
+      var dragListener = createDragListener(elements, initialTops, elIndex, initialY);
+      var throttledDragListener = throttle(50, dragListener);
+
+      // Listen to drags
+      var eventTarget = e.target;
+      eventTarget.addEventListener('drag', throttledDragListener);
+      eventTarget.addEventListener('dragend', function dragEndListener() {
+        dragListener.stop();
+        insertTargetInRightPlace(elements, initialTops, elIndex);
+        eventTarget.removeEventListener('drag', throttledDragListener);
+        eventTarget.removeEventListener('dragend', dragEndListener);
+        resolve();
+      });
+    }
+
+    init(paramE, paramEl, paramElements);
+  });
 }
 
 /**
@@ -3651,7 +3658,7 @@ var TrackList = function (_ViewController) {
     _this.rearrageable = rearrageable;
     Object.preventExtensions(_this);
 
-    _this.acceptEvents('change');
+    _this.acceptEvents('trackReorder');
     return _this;
   }
 
@@ -3726,21 +3733,26 @@ var TrackList = function (_ViewController) {
           return t.getContainer();
         });
         var trackEl = track.getContainer();
-        trackReorderDrag(e, trackEl, allTracks);
-      });
 
-      newTrack.on('dragend', function () {
-        // Reorder components according to their position.
-        var beforeReordering = JSON.stringify(_this3.html.container);
-        _this3.tracks.sort(function (t1, t2) {
-          return t1.getContainer().getBoundingClientRect().top > t2.getContainer().getBoundingClientRect().top;
+        trackReorderDrag(e, trackEl, allTracks)
+        // When drag has finished and elements have been reordered
+        // We use this promise instead of listening to newTrack.on('dragend')
+        // because the trigger('trackReorder') would be triggered before
+        // trackReorderDrag and thus could remove the elements it was dragging.
+        .then(function () {
+          // Reorder components according to their position.
+          var beforeReordering = JSON.stringify(_this3.tracks);
+          _this3.tracks.sort(function (t1, t2) {
+            return getElementIndex(t1.getContainer()) > getElementIndex(t2.getContainer());
+          });
+
+          // Trigger change if elements were reordered
+          var afterReordering = JSON.stringify(_this3.tracks);
+          if (beforeReordering !== afterReordering) {
+            console.log('trackReorder');
+            _this3.trigger('trackReorder');
+          }
         });
-
-        // Trigger change if elements were reordered
-        var afterReordering = JSON.stringify(_this3.html.container);
-        if (beforeReordering !== afterReordering) {
-          _this3.trigger('change');
-        }
       });
 
       newTrack.on('deleteBtnClick', function () {
@@ -3748,7 +3760,7 @@ var TrackList = function (_ViewController) {
         assert(trackIndex !== -1, 'Invalid track being deleted.');
         _this3.tracks = removeIndex(_this3.tracks, trackIndex);
         newTrack.destroy();
-        _this3.trigger('change');
+        _this3.trigger('trackReorder');
       });
 
       this.html.container.appendChild(newTrack.getContainer());
@@ -3759,6 +3771,16 @@ var TrackList = function (_ViewController) {
 
   return TrackList;
 }(ViewController);
+
+function getElementIndex(el) {
+  var node = el;
+  var i = 0;
+  while (node !== null) {
+    node = node.previousSibling;
+    i++;
+  }
+  return i;
+}
 
 /**
  * executes a callback when there is a click outside of a list of
@@ -4494,7 +4516,172 @@ function debounce(wait, func, immediate) {
 	};
 }
 
-var demoData = [{ "album": { "album_type": "album", "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"], "external_urls": { "spotify": "https://open.spotify.com/album/0TN9abNwnSnMW3jxw6uIeL" }, "href": "https://api.spotify.com/v1/albums/0TN9abNwnSnMW3jxw6uIeL", "id": "0TN9abNwnSnMW3jxw6uIeL", "images": [{ "height": 640, "url": "https://i.scdn.co/image/da88959a881cdc64bd576383c755fec0af2ca5f5", "width": 640 }, { "height": 300, "url": "https://i.scdn.co/image/6d2190a9b3f711b57e6ee924fa343239a36752df", "width": 300 }, { "height": 64, "url": "https://i.scdn.co/image/66f1b8e6703f912ffd76947ab8ab428a87e44ed0", "width": 64 }], "name": "Total Life Forever", "type": "album", "uri": "spotify:album:0TN9abNwnSnMW3jxw6uIeL" }, "artists": [{ "external_urls": { "spotify": "https://open.spotify.com/artist/6FQqZYVfTNQ1pCqfkwVFEa" }, "href": "https://api.spotify.com/v1/artists/6FQqZYVfTNQ1pCqfkwVFEa", "id": "6FQqZYVfTNQ1pCqfkwVFEa", "name": "Foals", "type": "artist", "uri": "spotify:artist:6FQqZYVfTNQ1pCqfkwVFEa" }], "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"], "disc_number": 1, "duration_ms": 409560, "explicit": true, "external_ids": { "isrc": "GBAHT1000047" }, "external_urls": { "spotify": "https://open.spotify.com/track/4i3txPQIUV4eC9g9FBpi9I" }, "href": "https://api.spotify.com/v1/tracks/4i3txPQIUV4eC9g9FBpi9I", "id": "4i3txPQIUV4eC9g9FBpi9I", "name": "Spanish Sahara", "popularity": 60, "preview_url": "https://p.scdn.co/mp3-preview/75d32af506df2354251f80726ab3e0656fa8e8f7", "track_number": 5, "type": "track", "uri": "spotify:track:4i3txPQIUV4eC9g9FBpi9I" }, { "album": { "album_type": "album", "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"], "external_urls": { "spotify": "https://open.spotify.com/album/0UccZZgelTAbbk3OSPZymO" }, "href": "https://api.spotify.com/v1/albums/0UccZZgelTAbbk3OSPZymO", "id": "0UccZZgelTAbbk3OSPZymO", "images": [{ "height": 640, "url": "https://i.scdn.co/image/f66195f98d32ffb0f1fcca0ea9e69e2794ec6742", "width": 640 }, { "height": 300, "url": "https://i.scdn.co/image/1f594d484a753cf21d909f3eaf0c3953d7caca61", "width": 300 }, { "height": 64, "url": "https://i.scdn.co/image/f323863361593570fe9a932e006a5a8b834991ec", "width": 64 }], "name": "Greatest Hits Volume One - The Singles", "type": "album", "uri": "spotify:album:0UccZZgelTAbbk3OSPZymO" }, "artists": [{ "external_urls": { "spotify": "https://open.spotify.com/artist/2sil8z5kiy4r76CRTXxBCA" }, "href": "https://api.spotify.com/v1/artists/2sil8z5kiy4r76CRTXxBCA", "id": "2sil8z5kiy4r76CRTXxBCA", "name": "The Goo Goo Dolls", "type": "artist", "uri": "spotify:artist:2sil8z5kiy4r76CRTXxBCA" }], "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"], "disc_number": 1, "duration_ms": 238333, "explicit": false, "external_ids": { "isrc": "USWB10704696" }, "external_urls": { "spotify": "https://open.spotify.com/track/7p1PhtGLjq0ISncRXBHqXY" }, "href": "https://api.spotify.com/v1/tracks/7p1PhtGLjq0ISncRXBHqXY", "id": "7p1PhtGLjq0ISncRXBHqXY", "name": "Here Is Gone", "popularity": 52, "preview_url": "https://p.scdn.co/mp3-preview/4a8b9f71672407eeae6b138cf27ad1613cafe767", "track_number": 3, "type": "track", "uri": "spotify:track:7p1PhtGLjq0ISncRXBHqXY" }, { "album": { "album_type": "album", "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"], "external_urls": { "spotify": "https://open.spotify.com/album/67cksuMf5EvK5pu1DwGeFi" }, "href": "https://api.spotify.com/v1/albums/67cksuMf5EvK5pu1DwGeFi", "id": "67cksuMf5EvK5pu1DwGeFi", "images": [{ "height": 640, "url": "https://i.scdn.co/image/cc5549f65c77d85b5b5405ba3a18f15995a7be9b", "width": 640 }, { "height": 300, "url": "https://i.scdn.co/image/265b55a307f70ba0c3f4770843601ab7130f0de6", "width": 300 }, { "height": 64, "url": "https://i.scdn.co/image/82363a9ee7c45f8afce1df0e541e56dea1be2a33", "width": 64 }], "name": "Illusions", "type": "album", "uri": "spotify:album:67cksuMf5EvK5pu1DwGeFi" }, "artists": [{ "external_urls": { "spotify": "https://open.spotify.com/artist/0NSO0g40h9CTj13hKPskeb" }, "href": "https://api.spotify.com/v1/artists/0NSO0g40h9CTj13hKPskeb", "id": "0NSO0g40h9CTj13hKPskeb", "name": "Ibrahim Maalouf", "type": "artist", "uri": "spotify:artist:0NSO0g40h9CTj13hKPskeb" }], "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"], "disc_number": 1, "duration_ms": 291303, "explicit": false, "external_ids": { "isrc": "FRP8H1300280" }, "external_urls": { "spotify": "https://open.spotify.com/track/5EzGOkUwkRUXYAyvjlEHah" }, "href": "https://api.spotify.com/v1/tracks/5EzGOkUwkRUXYAyvjlEHah", "id": "5EzGOkUwkRUXYAyvjlEHah", "name": "True Sorry", "popularity": 49, "preview_url": "https://p.scdn.co/mp3-preview/6b6beff68189d762fb03f3a24c5ada56c6232f61", "track_number": 8, "type": "track", "uri": "spotify:track:5EzGOkUwkRUXYAyvjlEHah" }];
+var demoData = [{
+  "user": 2,
+  "album": {
+    "album_type": "album",
+    "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"],
+    "external_urls": {
+      "spotify": "https://open.spotify.com/album/0TN9abNwnSnMW3jxw6uIeL"
+    },
+    "href": "https://api.spotify.com/v1/albums/0TN9abNwnSnMW3jxw6uIeL",
+    "id": "0TN9abNwnSnMW3jxw6uIeL",
+    "images": [{
+      "height": 640,
+      "url": "https://i.scdn.co/image/da88959a881cdc64bd576383c755fec0af2ca5f5",
+      "width": 640
+    }, {
+      "height": 300,
+      "url": "https://i.scdn.co/image/6d2190a9b3f711b57e6ee924fa343239a36752df",
+      "width": 300
+    }, {
+      "height": 64,
+      "url": "https://i.scdn.co/image/66f1b8e6703f912ffd76947ab8ab428a87e44ed0",
+      "width": 64
+    }],
+    "name": "Total Life Forever",
+    "type": "album",
+    "uri": "spotify:album:0TN9abNwnSnMW3jxw6uIeL"
+  },
+  "artists": [{
+    "external_urls": {
+      "spotify": "https://open.spotify.com/artist/6FQqZYVfTNQ1pCqfkwVFEa"
+    },
+    "href": "https://api.spotify.com/v1/artists/6FQqZYVfTNQ1pCqfkwVFEa",
+    "id": "6FQqZYVfTNQ1pCqfkwVFEa",
+    "name": "Foals",
+    "type": "artist",
+    "uri": "spotify:artist:6FQqZYVfTNQ1pCqfkwVFEa"
+  }],
+  "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "GB", "AD", "MC", "ID"],
+  "disc_number": 1,
+  "duration_ms": 409560,
+  "explicit": true,
+  "external_ids": {
+    "isrc": "GBAHT1000047"
+  },
+  "external_urls": {
+    "spotify": "https://open.spotify.com/track/4i3txPQIUV4eC9g9FBpi9I"
+  },
+  "href": "https://api.spotify.com/v1/tracks/4i3txPQIUV4eC9g9FBpi9I",
+  "id": "4i3txPQIUV4eC9g9FBpi9I",
+  "name": "Spanish Sahara",
+  "popularity": 60,
+  "preview_url": "https://p.scdn.co/mp3-preview/75d32af506df2354251f80726ab3e0656fa8e8f7",
+  "track_number": 5,
+  "type": "track",
+  "uri": "spotify:track:4i3txPQIUV4eC9g9FBpi9I"
+}, {
+  "user": 2,
+  "album": {
+    "album_type": "album",
+    "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"],
+    "external_urls": {
+      "spotify": "https://open.spotify.com/album/0UccZZgelTAbbk3OSPZymO"
+    },
+    "href": "https://api.spotify.com/v1/albums/0UccZZgelTAbbk3OSPZymO",
+    "id": "0UccZZgelTAbbk3OSPZymO",
+    "images": [{
+      "height": 640,
+      "url": "https://i.scdn.co/image/f66195f98d32ffb0f1fcca0ea9e69e2794ec6742",
+      "width": 640
+    }, {
+      "height": 300,
+      "url": "https://i.scdn.co/image/1f594d484a753cf21d909f3eaf0c3953d7caca61",
+      "width": 300
+    }, {
+      "height": 64,
+      "url": "https://i.scdn.co/image/f323863361593570fe9a932e006a5a8b834991ec",
+      "width": 64
+    }],
+    "name": "Greatest Hits Volume One - The Singles",
+    "type": "album",
+    "uri": "spotify:album:0UccZZgelTAbbk3OSPZymO"
+  },
+  "artists": [{
+    "external_urls": {
+      "spotify": "https://open.spotify.com/artist/2sil8z5kiy4r76CRTXxBCA"
+    },
+    "href": "https://api.spotify.com/v1/artists/2sil8z5kiy4r76CRTXxBCA",
+    "id": "2sil8z5kiy4r76CRTXxBCA",
+    "name": "The Goo Goo Dolls",
+    "type": "artist",
+    "uri": "spotify:artist:2sil8z5kiy4r76CRTXxBCA"
+  }],
+  "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"],
+  "disc_number": 1,
+  "duration_ms": 238333,
+  "explicit": false,
+  "external_ids": {
+    "isrc": "USWB10704696"
+  },
+  "external_urls": {
+    "spotify": "https://open.spotify.com/track/7p1PhtGLjq0ISncRXBHqXY"
+  },
+  "href": "https://api.spotify.com/v1/tracks/7p1PhtGLjq0ISncRXBHqXY",
+  "id": "7p1PhtGLjq0ISncRXBHqXY",
+  "name": "Here Is Gone",
+  "popularity": 52,
+  "preview_url": "https://p.scdn.co/mp3-preview/4a8b9f71672407eeae6b138cf27ad1613cafe767",
+  "track_number": 3,
+  "type": "track",
+  "uri": "spotify:track:7p1PhtGLjq0ISncRXBHqXY"
+}, {
+  "user": 2,
+  "album": {
+    "album_type": "album",
+    "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"],
+    "external_urls": {
+      "spotify": "https://open.spotify.com/album/67cksuMf5EvK5pu1DwGeFi"
+    },
+    "href": "https://api.spotify.com/v1/albums/67cksuMf5EvK5pu1DwGeFi",
+    "id": "67cksuMf5EvK5pu1DwGeFi",
+    "images": [{
+      "height": 640,
+      "url": "https://i.scdn.co/image/cc5549f65c77d85b5b5405ba3a18f15995a7be9b",
+      "width": 640
+    }, {
+      "height": 300,
+      "url": "https://i.scdn.co/image/265b55a307f70ba0c3f4770843601ab7130f0de6",
+      "width": 300
+    }, {
+      "height": 64,
+      "url": "https://i.scdn.co/image/82363a9ee7c45f8afce1df0e541e56dea1be2a33",
+      "width": 64
+    }],
+    "name": "Illusions",
+    "type": "album",
+    "uri": "spotify:album:67cksuMf5EvK5pu1DwGeFi"
+  },
+  "artists": [{
+    "external_urls": {
+      "spotify": "https://open.spotify.com/artist/0NSO0g40h9CTj13hKPskeb"
+    },
+    "href": "https://api.spotify.com/v1/artists/0NSO0g40h9CTj13hKPskeb",
+    "id": "0NSO0g40h9CTj13hKPskeb",
+    "name": "Ibrahim Maalouf",
+    "type": "artist",
+    "uri": "spotify:artist:0NSO0g40h9CTj13hKPskeb"
+  }],
+  "available_markets": ["AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO", "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR", "UY", "US", "GB", "AD", "LI", "MC", "ID"],
+  "disc_number": 1,
+  "duration_ms": 291303,
+  "explicit": false,
+  "external_ids": {
+    "isrc": "FRP8H1300280"
+  },
+  "external_urls": {
+    "spotify": "https://open.spotify.com/track/5EzGOkUwkRUXYAyvjlEHah"
+  },
+  "href": "https://api.spotify.com/v1/tracks/5EzGOkUwkRUXYAyvjlEHah",
+  "id": "5EzGOkUwkRUXYAyvjlEHah",
+  "name": "True Sorry",
+  "popularity": 49,
+  "preview_url": "https://p.scdn.co/mp3-preview/6b6beff68189d762fb03f3a24c5ada56c6232f61",
+  "track_number": 8,
+  "type": "track",
+  "uri": "spotify:track:5EzGOkUwkRUXYAyvjlEHah"
+}];
 
 var ModuleCoordinator = function () {
   function ModuleCoordinator(modulePrefix, userId) {
@@ -4520,9 +4707,9 @@ var ModuleCoordinator = function () {
     this.widgetContainer.set('searchResults', this.searchResults);
     this.widgetContainer.set('fullTrackList', this.fullTrackList);
 
-    this.fullTrackList.setTracks(demoData);
     this.listenToElementsEvents();
-    this.loadChosenTracks();
+    // this.loadTracks();
+    this.userTrackList.setTracks(demoData);
   }
 
   /**
@@ -4604,6 +4791,11 @@ var ModuleCoordinator = function () {
       this.searchResults.on('resultClick', function (el, trackInfo) {
         _this.addTrack(trackInfo);
       });
+
+      this.userTrackList.on('trackReorder', function () {
+        console.log('trackReorder');
+        _this.submitTracks();
+      });
     }
 
     /**
@@ -4637,6 +4829,7 @@ var ModuleCoordinator = function () {
     }
 
     /**
+     * Adds a track to the user list and trigger tracks update.
      * @private
      * @method addTrack
      * @param  {Object} trackInfo
@@ -4645,6 +4838,8 @@ var ModuleCoordinator = function () {
   }, {
     key: 'addTrack',
     value: function addTrack(trackInfo) {
+      // Add user credentials to track
+      trackInfo.user = { id: this.userId }; // eslint-disable-line no-param-reassign
       this.userTrackList.addTrack(trackInfo);
       this.submitTracks();
     }
@@ -4669,7 +4864,7 @@ var ModuleCoordinator = function () {
                 // await this.ajax.trackSubmission.query({ tracks: currentTracks }, 'POST');
 
                 _context3.next = 3;
-                return this.loadChosenTracks();
+                return this.loadTracks();
 
               case 3:
               case 'end':
@@ -4688,25 +4883,34 @@ var ModuleCoordinator = function () {
 
     /**
      * Loads tracks form the server
-     * @method loadChosenTracks
+     * @method loadTracks
      * @return {tracks}
      */
 
   }, {
-    key: 'loadChosenTracks',
+    key: 'loadTracks',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4() {
-        var demoTracks;
+        var _this2 = this;
+
+        var loadedTracks, userTracks;
         return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 // await this.ajax.loadTracks.query({ tracks: currentTracks }, 'POST');
-                demoTracks = this.userTrackList.getTracks();
+                loadedTracks = this.userTrackList.getTracks();
 
-                this.userTrackList.setTracks(demoTracks);
 
-              case 2:
+                assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
+                userTracks = loadedTracks.filter(function (t) {
+                  return t.user.id === _this2.userId;
+                });
+
+                this.userTrackList.setTracks(userTracks);
+                this.fullTrackList.setTracks(loadedTracks);
+
+              case 5:
               case 'end':
                 return _context4.stop();
             }
@@ -4714,11 +4918,11 @@ var ModuleCoordinator = function () {
         }, _callee4, this);
       }));
 
-      function loadChosenTracks() {
+      function loadTracks() {
         return ref.apply(this, arguments);
       }
 
-      return loadChosenTracks;
+      return loadTracks;
     }()
 
     /**

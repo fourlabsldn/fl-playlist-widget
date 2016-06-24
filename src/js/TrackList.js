@@ -11,7 +11,7 @@ export default class TrackList extends ViewController {
     this.rearrageable = rearrageable;
     Object.preventExtensions(this);
 
-    this.acceptEvents('change');
+    this.acceptEvents('trackReorder');
   }
 
   buildHtml() {
@@ -59,22 +59,27 @@ export default class TrackList extends ViewController {
       // Rearrange all tracks except the one playing
       const allTracks = this.tracks.filter(t => !t.info.playing).map(t => t.getContainer());
       const trackEl = track.getContainer();
-      trackReorderDrag(e, trackEl, allTracks);
-    });
 
-    newTrack.on('dragend', () => {
-      // Reorder components according to their position.
-      const beforeReordering = JSON.stringify(this.html.container);
-      this.tracks.sort((t1, t2) => {
-        return t1.getContainer().getBoundingClientRect().top >
-               t2.getContainer().getBoundingClientRect().top;
+      trackReorderDrag(e, trackEl, allTracks)
+      // When drag has finished and elements have been reordered
+      // We use this promise instead of listening to newTrack.on('dragend')
+      // because the trigger('trackReorder') would be triggered before
+      // trackReorderDrag and thus could remove the elements it was dragging.
+      .then(() => {
+        // Reorder components according to their position.
+        const beforeReordering = JSON.stringify(this.tracks);
+        this.tracks.sort((t1, t2) => {
+          return getElementIndex(t1.getContainer()) >
+                 getElementIndex(t2.getContainer());
+        });
+
+        // Trigger change if elements were reordered
+        const afterReordering = JSON.stringify(this.tracks);
+        if (beforeReordering !== afterReordering) {
+          console.log('trackReorder');
+          this.trigger('trackReorder');
+        }
       });
-
-      // Trigger change if elements were reordered
-      const afterReordering = JSON.stringify(this.html.container);
-      if (beforeReordering !== afterReordering) {
-        this.trigger('change');
-      }
     });
 
     newTrack.on('deleteBtnClick', () => {
@@ -82,11 +87,21 @@ export default class TrackList extends ViewController {
       assert(trackIndex !== -1, 'Invalid track being deleted.');
       this.tracks = removeIndex(this.tracks, trackIndex);
       newTrack.destroy();
-      this.trigger('change');
+      this.trigger('trackReorder');
     });
 
     this.html.container.appendChild(newTrack.getContainer());
     this.tracks.push(newTrack);
     return newTrack;
   }
+}
+
+function getElementIndex(el) {
+  let node = el;
+  let i = 0;
+  while (node !== null) {
+    node = node.previousSibling;
+    i++;
+  }
+  return i;
 }
