@@ -4,10 +4,11 @@ import ModuleCoordinator from './ModuleCoordinator';
 const MODULE_PREFIX = 'fl-pw';
 
 xController((xdiv) => {
-  console.log(xdiv);
-  const serverUrl = 'tesssst';
-  const userId = 'abcde';
+  const userInfo = {
+    id: xdiv.dataset.userId,
+    name: xdiv.dataset.userName,
+  };
 
-  const coordinator = new ModuleCoordinator(MODULE_PREFIX, 2);
+  const coordinator = new ModuleCoordinator(MODULE_PREFIX, userInfo);
   xdiv.appendChild(coordinator.getWidget());
 });

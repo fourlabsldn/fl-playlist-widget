@@ -5,15 +5,15 @@ import WidgetContainer from './WidgetContainer';
 import Ajax from './utils/Ajax';
 import assert from 'fl-assert';
 import debounce from './utils/debounce';
-import demoData from './utils/demoData';
 
 export default class ModuleCoordinator {
-  constructor(modulePrefix, userId) {
-    this.userId = userId;
+  constructor(modulePrefix, userInfo) {
+    this.userId = userInfo.id;
+    this.username = userInfo.name;
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
-    this.userTrackList = new TrackList(modulePrefix, userId);
-    this.fullTrackList = new TrackList(modulePrefix, userId, false); // non-rearrageable
+    this.userTrackList = new TrackList(modulePrefix, this.userId);
+    this.fullTrackList = new TrackList(modulePrefix, this.userId, false); // non-rearrageable
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
     Object.preventExtensions(this);
@@ -23,15 +23,12 @@ export default class ModuleCoordinator {
       { type: 'track' }
     );
 
-    this.ajax.trackSubmission = new Ajax(
-      'https://api.spotify.com/v1/search',
-      { userId: this.userId }
+    this.ajax.setUserTracks = new Ajax(
+      'http://127.0.0.1:3000/setUserTracks',
+      { user: { id: this.userId, name: this.username } }
     );
 
-    this.ajax.trackLoading = new Ajax(
-      'https://api.spotify.com/v1/search',
-      { type: 'track', userId: this.userId }
-    );
+    this.ajax.getTrackList = new Ajax('http://127.0.0.1:3000/getTrackList');
 
     this.widgetContainer.set('searchBox', this.searchBox);
     this.widgetContainer.set('userTrackList', this.userTrackList);
@@ -113,7 +110,7 @@ export default class ModuleCoordinator {
    */
   addTrack(trackInfo) {
     // Add user credentials to track
-    trackInfo.user = { id: this.userId, name: 'Marcelo Lazaroni' }; // eslint-disable-line no-param-reassign
+    trackInfo.user = { id: this.userId, name: this.username }; // eslint-disable-line no-param-reassign, max-len
     this.userTrackList.addTrack(trackInfo);
     this.submitTracks();
   }
@@ -125,8 +122,8 @@ export default class ModuleCoordinator {
    * @return {void}
    */
   async submitTracks() {
-    const currentTracks = this.userTrackList.getTracks();
-    // await this.ajax.trackSubmission.query({ tracks: currentTracks }, 'POST');
+    const tracks = this.userTrackList.getTracks();
+    await this.ajax.setUserTracks.query({ tracks }, 'POST');
     await this.loadTracks();
   }
 
@@ -136,11 +133,15 @@ export default class ModuleCoordinator {
    * @return {tracks}
    */
   async loadTracks() {
-    // await this.ajax.loadTracks.query({ tracks: currentTracks }, 'POST');
-    const loadedTracks =  demoData // change this for the line above
+    const loadedTracks = await this.ajax.getTrackList.query();
 
     assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
-    const userTracks = loadedTracks.filter(t => t.user.id === this.userId);
+
+    console.log('user id', this.userId);
+    const userTracks = loadedTracks.filter(t => {
+      console.log('track user id', t.user.id);
+      return t.user.id === this.userId;
+    });
     this.userTrackList.setTracks(userTracks);
     this.fullTrackList.setTracks(loadedTracks);
   }
