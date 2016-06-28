@@ -77,8 +77,8 @@
     display: block; }
 
 .fl-pw_WidgetContainer-fullPlaylistTab .fl-pw_Track {
-  -webkit-filter: grayscale(70%);
-          filter: grayscale(70%); }
+  -webkit-filter: grayscale(90%);
+          filter: grayscale(90%); }
 
 .fl-pw_WidgetContainer-fullPlaylistTab:hover .fl-pw_Track,
 .fl-pw_WidgetContainer-fullPlaylistTab .fl-pw_Track--userTrack {
