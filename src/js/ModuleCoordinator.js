@@ -137,9 +137,7 @@ export default class ModuleCoordinator {
 
     assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
 
-    console.log('user id', this.userId);
     const userTracks = loadedTracks.filter(t => {
-      console.log('track user id', t.user.id);
       return t.user.id === this.userId;
     });
     this.userTrackList.setTracks(userTracks);

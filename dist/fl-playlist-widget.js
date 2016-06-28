@@ -4757,16 +4757,14 @@ var ModuleCoordinator = function () {
 
                 assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
 
-                console.log('user id', this.userId);
                 userTracks = loadedTracks.filter(function (t) {
-                  console.log('track user id', t.user.id);
                   return t.user.id === _this2.userId;
                 });
 
                 this.userTrackList.setTracks(userTracks);
                 this.fullTrackList.setTracks(loadedTracks);
 
-              case 8:
+              case 7:
               case 'end':
                 return _context4.stop();
             }
