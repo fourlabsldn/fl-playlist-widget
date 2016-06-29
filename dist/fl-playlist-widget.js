@@ -3694,7 +3694,6 @@ var TrackList = function (_ViewController) {
     value: function setTracks(tracks) {
       var _this2 = this;
 
-      if (tracks[0]) tracks[0].playing = true;
       assert(Array.isArray(tracks), 'Invalid tracks object. Not an array: "' + tracks + '"');
       this.clearAllTracks();
       tracks.forEach(function (trackInfo) {
