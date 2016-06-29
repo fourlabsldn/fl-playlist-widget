@@ -1,14 +1,3 @@
-.fl-pw_SearchBox {
-  display: flex;
-  flex-flow: row wrap;
-  align-items: stretch;
-}
-
-.fl-pw_SearchBox-textInput {
-  flex: 5 5;
-}
-
 .fl-pw_SearchBox-icon {
-  flex: 1 5;
-  fill: #222;
+  opacity: .4;
 }
