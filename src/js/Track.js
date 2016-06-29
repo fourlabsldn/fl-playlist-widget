@@ -22,11 +22,15 @@ export default class Track extends ViewController {
     super.buildHtml();
 
     // Create HTML
+    const coverLink = document.createElement('a');
+    coverLink.setAttribute('target', 'blank');
+    try { coverLink.setAttribute('href', info.album.external_urls.spotify); } catch (e) {} // eslint-disable-line no-empty, max-len
+    this.html.container.appendChild(coverLink);
 
     const coverImg = document.createElement('img');
     coverImg.classList.add(`${this.cssPrefix}-cover`);
     coverImg.setAttribute('src', info.album.images[1].url);
-    this.html.container.appendChild(coverImg);
+    coverLink.appendChild(coverImg);
 
     const linearGradients = 'linear-gradient(45deg, rgb(255, 255, 255) 0%, rgba(255, 255, 255, .94) 50%, rgba(255, 255, 255, 0.8) 100%)'; // eslint-disable-line max-len
     this.html.container.style.background = `url("${info.album.images[1].url}"), ${linearGradients}`;
@@ -36,12 +40,16 @@ export default class Track extends ViewController {
     trackInfo.classList.add(trackInfoClass);
     this.html.container.appendChild(trackInfo);
 
-    const title = document.createElement('span');
+    const title = document.createElement('a');
+    title.setAttribute('target', 'blank');
+    try { title.setAttribute('href', info.external_urls.spotify); } catch (e) {} // eslint-disable-line no-empty, max-len
     title.classList.add(`${trackInfoClass}-title`);
     title.innerHTML = info.name;
     trackInfo.appendChild(title);
 
-    const artist = document.createElement('span');
+    const artist = document.createElement('a');
+    artist.setAttribute('target', 'blank');
+    try { artist.setAttribute('href', info.artists[0].external_urls.spotify); } catch (e) {} // eslint-disable-line no-empty, max-len
     artist.classList.add(`${trackInfoClass}-artist`);
     artist.innerHTML = info.artists[0].name;
     trackInfo.appendChild(artist);

@@ -29,7 +29,6 @@ export default class TrackList extends ViewController {
    * @param  {Array<Object>} tracks
    */
   setTracks(tracks) {
-    if (tracks[0]) tracks[0].playing = true;
     assert(Array.isArray(tracks), `Invalid tracks object. Not an array: "${tracks}"`);
     this.clearAllTracks();
     tracks.forEach(trackInfo => this.addTrack(trackInfo));

@@ -34,6 +34,7 @@
   display: flex;
   flex-flow: column nowrap;
   padding-left: 1em;
+  color: inherit;
 }
 
 .fl-pw_Track-info-title,
@@ -42,6 +43,19 @@
 .fl-pw_Track-btns {
   display: block;
   margin: .05em 0;
+}
+
+.fl-pw_Track-info-title,
+.fl-pw_Track-info-artist {
+  color: inherit;
+
+  &:visited {
+    color: inherit;
+  }
+
+  &:hover {
+    color: lighten($c-text, 20%);
+  }
 }
 
 .fl-pw_Track-info-title {

@@ -12,6 +12,8 @@ const rename = require('gulp-rename');
 const autoprefixer = require('autoprefixer');
 const postcss = require('gulp-postcss');
 const path = require('path');
+const concat = require('gulp-concat');
+const addsrc = require('gulp-add-src');
 
 // Name of current working directory
 const moduleName = path.parse(__dirname).base;
@@ -20,6 +22,9 @@ const paths = {
     src: './src/**/*',
     main: './src/js/main.js',
     dest: './dist/',
+  },
+  dependencies: {
+    src: './src/dependencies/*.js',
   },
   sass: {
     src: './src/sass/**/*',
@@ -60,7 +65,8 @@ gulp.task('build:src', () => {
       }),
     ],
   }))
-  .pipe(rename({ basename: moduleName }))
+  .pipe(addsrc(paths.dependencies.src))
+  .pipe(concat(`${moduleName}.js`))
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest(paths.js.dest));
 });

@@ -1,3 +1,5 @@
+/* globals io */
+
 import TrackList from './TrackList';
 import SearchResults from './SearchResults';
 import SearchBox from './SearchBox';
@@ -6,16 +8,23 @@ import Ajax from './utils/Ajax';
 import assert from 'fl-assert';
 import debounce from './utils/debounce';
 
+
 export default class ModuleCoordinator {
-  constructor(modulePrefix, userInfo) {
-    this.userId = userInfo.id;
-    this.username = userInfo.name;
+  constructor(modulePrefix, userInfo, serverUrl) {
+    this.userInfo = JSON.parse(JSON.stringify(userInfo));
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
-    this.userTrackList = new TrackList(modulePrefix, this.userId);
-    this.fullTrackList = new TrackList(modulePrefix, this.userId, false); // non-rearrageable
+    this.userTrackList = new TrackList(modulePrefix, this.userInfo.id);
+
+    // non-rearrageable
+    this.fullTrackList = new TrackList(modulePrefix, this.userInfo.id, false);
+
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
+
+    assert(io, 'Socket.io not loaded.');
+    this.socket = io(serverUrl);
+
     Object.preventExtensions(this);
 
     this.ajax.trackSearch = new Ajax(
@@ -24,17 +33,18 @@ export default class ModuleCoordinator {
     );
 
     this.ajax.setUserTracks = new Ajax(
-      'http://127.0.0.1:3000/setUserTracks',
-      { user: { id: this.userId, name: this.username } }
+      `${serverUrl}/setUserTracks`,
+      { user: { id: this.userInfo.id, name: this.userInfo.name } }
     );
 
-    this.ajax.getTrackList = new Ajax('http://127.0.0.1:3000/getTrackList');
+    this.ajax.getTrackList = new Ajax(`${serverUrl}/getTrackList`);
 
     this.widgetContainer.set('searchBox', this.searchBox);
     this.widgetContainer.set('userTrackList', this.userTrackList);
     this.widgetContainer.set('searchResults', this.searchResults);
     this.widgetContainer.set('fullTrackList', this.fullTrackList);
 
+    this.socket.on('playlist_update', (tracks) => this.loadTracks(tracks));
     this.listenToElementsEvents();
     this.loadTracks();
   }
@@ -110,7 +120,7 @@ export default class ModuleCoordinator {
    */
   addTrack(trackInfo) {
     // Add user credentials to track
-    trackInfo.user = { id: this.userId, name: this.username }; // eslint-disable-line no-param-reassign, max-len
+    trackInfo.user = { id: this.userInfo.id, name: this.userInfo.name }; // eslint-disable-line no-param-reassign, max-len
     this.userTrackList.addTrack(trackInfo);
     this.submitTracks();
   }
@@ -123,24 +133,31 @@ export default class ModuleCoordinator {
    */
   async submitTracks() {
     const tracks = this.userTrackList.getTracks();
-    await this.ajax.setUserTracks.query({ tracks }, 'POST');
-    await this.loadTracks();
+
+    // This will trigger a playlist_update
+    this.socket.emit(
+      'user_playlist_update',
+      { user: { id: this.userInfo.id, name: this.userInfo.name }, tracks }
+    );
   }
 
   /**
    * Loads tracks form the server
+   * Usually it will be called with the preloadedTracks as a response from
+   * a server socket event. But it may be called without it in situations such
+   * as when the widget is initiated
    * @method loadTracks
+   * @param {Array} preloadedTracks
    * @return {tracks}
    */
-  async loadTracks() {
-    const loadedTracks = await this.ajax.getTrackList.query();
+  async loadTracks(preloadedTracks) {
+    console.log('Loaded tracks');
+    const loadedTracks = preloadedTracks || await this.ajax.getTrackList.get();
 
     assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
 
-    console.log('user id', this.userId);
     const userTracks = loadedTracks.filter(t => {
-      console.log('track user id', t.user.id);
-      return t.user.id === this.userId;
+      return t.user.id === this.userInfo.id;
     });
     this.userTrackList.setTracks(userTracks);
     this.fullTrackList.setTracks(loadedTracks);
@@ -157,7 +174,7 @@ export default class ModuleCoordinator {
     if (!searchString) { return null; }
     let tracksFound = null;
     try {
-      const res = await this.ajax.trackSearch.query({ q: searchString });
+      const res = await this.ajax.trackSearch.get({ q: searchString });
       tracksFound = res.tracks.items;
     } catch (e) {
       assert.warn(false, `Error searching tracks: ${e.message}`);

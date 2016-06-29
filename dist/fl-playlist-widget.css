@@ -129,7 +129,8 @@
   -webkit-flex-flow: column nowrap;
       -ms-flex-flow: column nowrap;
           flex-flow: column nowrap;
-  padding-left: 1em; }
+  padding-left: 1em;
+  color: inherit; }
 
 .fl-pw_Track-info-title,
 .fl-pw_Track-info-artist,
@@ -137,6 +138,16 @@
 .fl-pw_Track-btns {
   display: block;
   margin: .05em 0; }
+
+.fl-pw_Track-info-title,
+.fl-pw_Track-info-artist {
+  color: inherit; }
+  .fl-pw_Track-info-title:visited,
+  .fl-pw_Track-info-artist:visited {
+    color: inherit; }
+  .fl-pw_Track-info-title:hover,
+  .fl-pw_Track-info-artist:hover {
+    color: #636363; }
 
 .fl-pw_Track-info-title {
   font-weight: bold; }
