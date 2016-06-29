@@ -11970,7 +11970,9 @@ function debounce(wait, func, immediate) {
 }
 
 var ModuleCoordinator = function () {
-  function ModuleCoordinator(modulePrefix, userInfo) {
+  function ModuleCoordinator(modulePrefix, userInfo, serverUrl) {
+    var _this = this;
+
     _classCallCheck(this, ModuleCoordinator);
 
     this.userId = userInfo.id;
@@ -11981,19 +11983,26 @@ var ModuleCoordinator = function () {
     this.fullTrackList = new TrackList(modulePrefix, this.userId, false); // non-rearrageable
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
+
+    assert(io, 'Socket.io not loaded.');
+    this.socket = io(serverUrl);
+
     Object.preventExtensions(this);
 
     this.ajax.trackSearch = new Ajax('https://api.spotify.com/v1/search', { type: 'track' });
 
-    this.ajax.setUserTracks = new Ajax('http://127.0.0.1:3000/setUserTracks', { user: { id: this.userId, name: this.username } });
+    this.ajax.setUserTracks = new Ajax(serverUrl + '/setUserTracks', { user: { id: this.userId, name: this.username } });
 
-    this.ajax.getTrackList = new Ajax('http://127.0.0.1:3000/getTrackList');
+    this.ajax.getTrackList = new Ajax(serverUrl + '/getTrackList');
 
     this.widgetContainer.set('searchBox', this.searchBox);
     this.widgetContainer.set('userTrackList', this.userTrackList);
     this.widgetContainer.set('searchResults', this.searchResults);
     this.widgetContainer.set('fullTrackList', this.fullTrackList);
 
+    this.socket.on('playlist_update', function (tracks) {
+      return _this.loadTracks(tracks);
+    });
     this.listenToElementsEvents();
     this.loadTracks();
   }
@@ -12009,15 +12018,15 @@ var ModuleCoordinator = function () {
   _createClass(ModuleCoordinator, [{
     key: 'listenToElementsEvents',
     value: function listenToElementsEvents() {
-      var _this = this;
+      var _this2 = this;
 
       this.searchBox.on('enterPressed', function () {
-        var firstResult = _this.searchResults.getFirst();
+        var firstResult = _this2.searchResults.getFirst();
         if (!firstResult) {
           return;
         }
-        _this.searchResults.setVisible(false);
-        _this.addTrack(firstResult);
+        _this2.searchResults.setVisible(false);
+        _this2.addTrack(firstResult);
       });
 
       var debouncedTrackSearch = debounce(200, _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
@@ -12026,15 +12035,15 @@ var ModuleCoordinator = function () {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                searchString = _this.searchBox.getInput();
+                searchString = _this2.searchBox.getInput();
                 _context.next = 3;
-                return _this.searchTrack(searchString);
+                return _this2.searchTrack(searchString);
 
               case 3:
                 tracksFound = _context.sent;
 
                 if (tracksFound) {
-                  _this.searchResults.setResults(tracksFound);
+                  _this2.searchResults.setResults(tracksFound);
                 }
 
               case 5:
@@ -12042,7 +12051,7 @@ var ModuleCoordinator = function () {
                 return _context.stop();
             }
           }
-        }, _callee, _this);
+        }, _callee, _this2);
       })));
 
       this.searchBox.on('usertyping', function () {
@@ -12056,7 +12065,7 @@ var ModuleCoordinator = function () {
                   arrowUpCode = 38;
 
                   if (keyCode === arrowDownCode || keyCode === arrowUpCode) {
-                    _this.searchResults.startKeyboardNavigation();
+                    _this2.searchResults.startKeyboardNavigation();
                   } else {
                     debouncedTrackSearch();
                   }
@@ -12066,7 +12075,7 @@ var ModuleCoordinator = function () {
                   return _context2.stop();
               }
             }
-          }, _callee2, _this);
+          }, _callee2, _this2);
         }));
 
         return function (_x, _x2) {
@@ -12075,11 +12084,11 @@ var ModuleCoordinator = function () {
       }());
 
       this.searchResults.on('resultClick', function (el, trackInfo) {
-        _this.addTrack(trackInfo);
+        _this2.addTrack(trackInfo);
       });
 
       this.userTrackList.on('trackReorder', function () {
-        _this.submitTracks();
+        _this2.submitTracks();
       });
     }
 
@@ -12152,20 +12161,13 @@ var ModuleCoordinator = function () {
               case 3:
                 outcome = _context3.sent;
 
-                if (!outcome.error) {
-                  _context3.next = 8;
-                  break;
+                if (outcome.error) {
+                  this.widgetContainer.displayInfo(outcome.error, true);
+                } else {
+                  // await this.loadTracks();
                 }
 
-                this.widgetContainer.displayInfo(outcome.error, true);
-                _context3.next = 10;
-                break;
-
-              case 8:
-                _context3.next = 10;
-                return this.loadTracks();
-
-              case 10:
+              case 5:
               case 'end':
                 return _context3.stop();
             }
@@ -12183,37 +12185,49 @@ var ModuleCoordinator = function () {
     /**
      * Loads tracks form the server
      * @method loadTracks
+     * @param {Array} preloadedTracks
      * @return {tracks}
      */
 
   }, {
     key: 'loadTracks',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4() {
-        var _this2 = this;
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(preloadedTracks) {
+        var _this3 = this;
 
         var loadedTracks, userTracks;
         return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _context4.next = 2;
+                console.log('Loaded tracks');
+                _context4.t0 = preloadedTracks;
+
+                if (_context4.t0) {
+                  _context4.next = 6;
+                  break;
+                }
+
+                _context4.next = 5;
                 return this.ajax.getTrackList.get();
 
-              case 2:
-                loadedTracks = _context4.sent;
+              case 5:
+                _context4.t0 = _context4.sent;
+
+              case 6:
+                loadedTracks = _context4.t0;
 
 
                 assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
 
                 userTracks = loadedTracks.filter(function (t) {
-                  return t.user.id === _this2.userId;
+                  return t.user.id === _this3.userId;
                 });
 
                 this.userTrackList.setTracks(userTracks);
                 this.fullTrackList.setTracks(loadedTracks);
 
-              case 7:
+              case 11:
               case 'end':
                 return _context4.stop();
             }
@@ -12221,7 +12235,7 @@ var ModuleCoordinator = function () {
         }, _callee4, this);
       }));
 
-      function loadTracks() {
+      function loadTracks(_x4) {
         return ref.apply(this, arguments);
       }
 
@@ -12281,7 +12295,7 @@ var ModuleCoordinator = function () {
         }, _callee5, this, [[3, 10]]);
       }));
 
-      function searchTrack(_x4) {
+      function searchTrack(_x5) {
         return ref.apply(this, arguments);
       }
 
@@ -12300,7 +12314,9 @@ xController(function (xdiv) {
     name: xdiv.dataset.userName
   };
 
-  var coordinator = new ModuleCoordinator(MODULE_PREFIX, userInfo);
+  var serverUrl = xdiv.dataset.server;
+
+  var coordinator = new ModuleCoordinator(MODULE_PREFIX, userInfo, serverUrl);
   xdiv.appendChild(coordinator.getWidget());
 });
 }());

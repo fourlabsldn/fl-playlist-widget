@@ -1,3 +1,5 @@
+/* globals io */
+
 import TrackList from './TrackList';
 import SearchResults from './SearchResults';
 import SearchBox from './SearchBox';
@@ -6,8 +8,9 @@ import Ajax from './utils/Ajax';
 import assert from 'fl-assert';
 import debounce from './utils/debounce';
 
+
 export default class ModuleCoordinator {
-  constructor(modulePrefix, userInfo) {
+  constructor(modulePrefix, userInfo, serverUrl) {
     this.userId = userInfo.id;
     this.username = userInfo.name;
     this.searchBox = new SearchBox(modulePrefix);
@@ -16,6 +19,10 @@ export default class ModuleCoordinator {
     this.fullTrackList = new TrackList(modulePrefix, this.userId, false); // non-rearrageable
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
+
+    assert(io, 'Socket.io not loaded.');
+    this.socket = io(serverUrl);
+
     Object.preventExtensions(this);
 
     this.ajax.trackSearch = new Ajax(
@@ -24,17 +31,18 @@ export default class ModuleCoordinator {
     );
 
     this.ajax.setUserTracks = new Ajax(
-      'http://127.0.0.1:3000/setUserTracks',
+      `${serverUrl}/setUserTracks`,
       { user: { id: this.userId, name: this.username } }
     );
 
-    this.ajax.getTrackList = new Ajax('http://127.0.0.1:3000/getTrackList');
+    this.ajax.getTrackList = new Ajax(`${serverUrl}/getTrackList`);
 
     this.widgetContainer.set('searchBox', this.searchBox);
     this.widgetContainer.set('userTrackList', this.userTrackList);
     this.widgetContainer.set('searchResults', this.searchResults);
     this.widgetContainer.set('fullTrackList', this.fullTrackList);
 
+    this.socket.on('playlist_update', (tracks) => this.loadTracks(tracks));
     this.listenToElementsEvents();
     this.loadTracks();
   }
@@ -127,17 +135,19 @@ export default class ModuleCoordinator {
     if (outcome.error) {
       this.widgetContainer.displayInfo(outcome.error, true);
     } else {
-      await this.loadTracks();
+      // await this.loadTracks();
     }
   }
 
   /**
    * Loads tracks form the server
    * @method loadTracks
+   * @param {Array} preloadedTracks
    * @return {tracks}
    */
-  async loadTracks() {
-    const loadedTracks = await this.ajax.getTrackList.get();
+  async loadTracks(preloadedTracks) {
+    console.log('Loaded tracks');
+    const loadedTracks = preloadedTracks || await this.ajax.getTrackList.get();
 
     assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
 

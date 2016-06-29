@@ -9,6 +9,8 @@ xController((xdiv) => {
     name: xdiv.dataset.userName,
   };
 
-  const coordinator = new ModuleCoordinator(MODULE_PREFIX, userInfo);
+  const serverUrl = xdiv.dataset.server;
+
+  const coordinator = new ModuleCoordinator(MODULE_PREFIX, userInfo, serverUrl);
   xdiv.appendChild(coordinator.getWidget());
 });
