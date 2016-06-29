@@ -1,28 +1,5 @@
-.fl-pw_SearchBox {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-flow: row wrap;
-      -ms-flex-flow: row wrap;
-          flex-flow: row wrap;
-  -webkit-box-align: stretch;
-  -webkit-align-items: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch; }
-
-.fl-pw_SearchBox-textInput {
-  -webkit-box-flex: 5;
-  -webkit-flex: 5 5;
-      -ms-flex: 5 5;
-          flex: 5 5; }
-
 .fl-pw_SearchBox-icon {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1 5;
-      -ms-flex: 1 5;
-          flex: 1 5;
-  fill: #222; }
+  opacity: .4; }
 
 .fl-pw_WidgetContainer-info {
   display: none;
@@ -56,6 +33,10 @@
   -webkit-align-content: stretch;
       -ms-flex-line-pack: stretch;
           align-content: stretch;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
   list-style: none;
   padding: 0;
   margin: 0 0 .3em; }
@@ -105,8 +86,6 @@
   position: relative;
   padding: .3em 1em;
   border: 1px solid #dddddd;
-  -webkit-border-radius: 5px;
-          border-radius: 5px;
   margin-top: .5em;
   background-blend-mode: color-dodge;
   -webkit-transition: all .2s ease;
