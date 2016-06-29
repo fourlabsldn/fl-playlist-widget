@@ -50,9 +50,9 @@ export default class Ajax {
     const config = {
       method: 'POST',
       redirect: 'follow',
-      mode: 'cors', 
+      mode: 'cors',
       headers: new Headers({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ requestBody }),
+      body: JSON.stringify(requestBody),
     };
 
     return this.sendRequest(config, url);

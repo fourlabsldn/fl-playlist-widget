@@ -4533,7 +4533,7 @@ var Ajax = function () {
                   redirect: 'follow',
                   mode: 'cors',
                   headers: new Headers({ 'Content-Type': 'application/json' }),
-                  body: JSON.stringify({ requestBody: requestBody })
+                  body: JSON.stringify(requestBody)
                 };
                 return _context2.abrupt('return', this.sendRequest(config, url));
 
