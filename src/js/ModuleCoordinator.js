@@ -11,12 +11,14 @@ import debounce from './utils/debounce';
 
 export default class ModuleCoordinator {
   constructor(modulePrefix, userInfo, serverUrl) {
-    this.userId = userInfo.id;
-    this.username = userInfo.name;
+    this.userInfo = JSON.parse(JSON.stringify(userInfo));
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
-    this.userTrackList = new TrackList(modulePrefix, this.userId);
-    this.fullTrackList = new TrackList(modulePrefix, this.userId, false); // non-rearrageable
+    this.userTrackList = new TrackList(modulePrefix, this.userInfo.id);
+
+    // non-rearrageable
+    this.fullTrackList = new TrackList(modulePrefix, this.userInfo.id, false);
+
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
 
@@ -32,7 +34,7 @@ export default class ModuleCoordinator {
 
     this.ajax.setUserTracks = new Ajax(
       `${serverUrl}/setUserTracks`,
-      { user: { id: this.userId, name: this.username } }
+      { user: { id: this.userInfo.id, name: this.userInfo.name } }
     );
 
     this.ajax.getTrackList = new Ajax(`${serverUrl}/getTrackList`);
@@ -118,7 +120,7 @@ export default class ModuleCoordinator {
    */
   addTrack(trackInfo) {
     // Add user credentials to track
-    trackInfo.user = { id: this.userId, name: this.username }; // eslint-disable-line no-param-reassign, max-len
+    trackInfo.user = { id: this.userInfo.id, name: this.userInfo.name }; // eslint-disable-line no-param-reassign, max-len
     this.userTrackList.addTrack(trackInfo);
     this.submitTracks();
   }
@@ -131,16 +133,19 @@ export default class ModuleCoordinator {
    */
   async submitTracks() {
     const tracks = this.userTrackList.getTracks();
-    const outcome = await this.ajax.setUserTracks.post({ tracks });
-    if (outcome.error) {
-      this.widgetContainer.displayInfo(outcome.error, true);
-    } else {
-      // await this.loadTracks();
-    }
+
+    // This will trigger a playlist_update
+    this.socket.emit(
+      'user_playlist_update',
+      { user: { id: this.userInfo.id, name: this.userInfo.name }, tracks }
+    );
   }
 
   /**
    * Loads tracks form the server
+   * Usually it will be called with the preloadedTracks as a response from
+   * a server socket event. But it may be called without it in situations such
+   * as when the widget is initiated
    * @method loadTracks
    * @param {Array} preloadedTracks
    * @return {tracks}
@@ -152,7 +157,7 @@ export default class ModuleCoordinator {
     assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
 
     const userTracks = loadedTracks.filter(t => {
-      return t.user.id === this.userId;
+      return t.user.id === this.userInfo.id;
     });
     this.userTrackList.setTracks(userTracks);
     this.fullTrackList.setTracks(loadedTracks);

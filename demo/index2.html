@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- saved from url=(0020)https://djdhive.com/ -->
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<link rel="icon" href="https://djdhive.com/favicon.ico" type="image/x-icon">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>DJD Hive Demo</title>
+
+	<link rel="stylesheet" href="./DJD Hive_files/ui.jqgrid.css&amp;v=0.2">
+	<link rel="stylesheet" href="./DJD Hive_files/flaty-responsive.css&amp;v=0.213">
+	<link rel="stylesheet" href="./DJD Hive_files/css">
+  <script src="dependencies/x-div.js"></script>
+
+  <link rel="stylesheet" href="../dist/fl-playlist-widget.css">
+</head>
+<body class="main skin-blue" cz-shortcut-listen="true">
+<div id="navbar" class="navbar navbar-fixed" role="navigation">
+	<a class="pull-left" href="https://djdhive.com/">
+		<img src="./DJD Hive_files/logo-hive.png" width="92" height="40">
+	</a>
+	<ul class="nav flaty-nav pull-right">
+		<li class="user-profile">
+			<a data-toggle="dropdown" href="https://djdhive.com/#" class="user-menu dropdown-toggle">
+				<img class="nav-user-photo" src="./DJD Hive_files/saved_resource" width="33" height="32" alt="">
+				<span>Jonny</span>
+				<i class="fa fa-caret-down"></i>
+			</a>
+
+			<ul class="dropdown-menu dropdown-navbar" id="user_menu">
+				<li class="nav-header">
+					<i class="fa fa-history"></i>
+					Online since 15:06
+				</li>
+				<li class="hidden-xs">
+					<a href="https://djdhive.com/?page=useraccount">
+						<i class="fa fa-user"></i>
+						Edit Profile
+					</a>
+				</li>
+								<li>
+					<a href="https://djdhive.com/?page=form&amp;cat=useraccount&amp;form=leave">
+						<i class="fa fa-thumbs-up"></i>
+						Manage leave
+					</a>
+				</li>
+								<li>
+					<a href="https://djdhive.com/?action=help&amp;help_cat=dashboard">
+						<i class="fa fa-question"></i>
+						Help
+					</a>
+				</li>
+
+
+				<li class="divider"></li>
+
+				<li>
+					<a href="https://djdhive.com/?page=logout">
+						<i class="fa fa-power-off"></i>
+						Logout
+					</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+
+<div class="container" id="main-container">
+	<div id="sidebar" class="navbar-collapse collapse sidebar-fixed">
+		<ul class="nav nav-list">
+			<li>
+				<form class="search-form">
+					<span class="search-pan">
+                        <button type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <input type="text" name="search" placeholder="Search ..." autocomplete="off">
+                    </span>
+				</form>
+			</li>
+																			<li class="active">
+				<a href="https://djdhive.com/?page=dashboard">
+					<i class="fa fa-tachometer"></i>					<span>Dashboard</span>
+				</a>
+			</li>
+												<li>
+				<a href="https://djdhive.com/?page=calendar">
+					<i class="fa fa-calendar-o"></i>					<span>Calendar</span>
+				</a>
+			</li>
+					</ul>
+		<div id="sidebar-collapse" class="visible-lg">
+			<i class="fa fa-angle-double-left"></i>
+		</div>
+	</div>
+<div id="main-content">
+
+		<div class="page-title">
+		<div>
+			<h1><i class="fa fa-tachometer"></i> Dashboard</h1>
+			<h4>Hello Jonny</h4>
+		</div>userId
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="tabbable">
+
+			</div>
+		</div>
+	</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-black">
+            <div class="box-title">
+                <h3><i class="fa fa-twitter"></i> What's happening</h3>
+            </div>
+            <div class="box-content">
+                                <iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="twitter-timeline twitter-timeline-rendered" style="position: static; visibility: visible; display: inline-block; width: 520px; padding: 0px; border: none; max-width: 100%; min-width: 180px; margin-top: 0px; margin-bottom: 0px; height: 347px;" data-widget-id="591232188810661888" title="Twitter Timeline" src="./DJD Hive_files/saved_resource.html"></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="box box-black">
+            <div class="box-title">
+                <h3><i class="fa fa-twitter"></i>Playlist</h3>
+            </div>
+            <div class="box-content">
+              <x-div
+                data-controller="../dist/fl-playlist-widget"
+                data-user-id="1"
+                data-user-name="Jonny"
+                data-server="http://127.0.0.1:3000"
+                ></x-div>
+            </div>
+        </div>
+    </div>
+</div>

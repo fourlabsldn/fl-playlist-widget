@@ -10523,11 +10523,17 @@ var Track = function (_ViewController) {
       _get(Object.getPrototypeOf(Track.prototype), 'buildHtml', this).call(this);
 
       // Create HTML
+      var coverLink = document.createElement('a');
+      coverLink.setAttribute('target', 'blank');
+      try {
+        coverLink.setAttribute('href', info.album.external_urls.spotify);
+      } catch (e) {} // eslint-disable-line no-empty, max-len
+      this.html.container.appendChild(coverLink);
 
       var coverImg = document.createElement('img');
       coverImg.classList.add(this.cssPrefix + '-cover');
       coverImg.setAttribute('src', info.album.images[1].url);
-      this.html.container.appendChild(coverImg);
+      coverLink.appendChild(coverImg);
 
       var linearGradients = 'linear-gradient(45deg, rgb(255, 255, 255) 0%, rgba(255, 255, 255, .94) 50%, rgba(255, 255, 255, 0.8) 100%)'; // eslint-disable-line max-len
       this.html.container.style.background = 'url("' + info.album.images[1].url + '"), ' + linearGradients;
@@ -10537,12 +10543,20 @@ var Track = function (_ViewController) {
       trackInfo.classList.add(trackInfoClass);
       this.html.container.appendChild(trackInfo);
 
-      var title = document.createElement('span');
+      var title = document.createElement('a');
+      title.setAttribute('target', 'blank');
+      try {
+        title.setAttribute('href', info.external_urls.spotify);
+      } catch (e) {} // eslint-disable-line no-empty, max-len
       title.classList.add(trackInfoClass + '-title');
       title.innerHTML = info.name;
       trackInfo.appendChild(title);
 
-      var artist = document.createElement('span');
+      var artist = document.createElement('a');
+      artist.setAttribute('target', 'blank');
+      try {
+        artist.setAttribute('href', info.artists[0].external_urls.spotify);
+      } catch (e) {} // eslint-disable-line no-empty, max-len
       artist.classList.add(trackInfoClass + '-artist');
       artist.innerHTML = info.artists[0].name;
       trackInfo.appendChild(artist);
@@ -11975,12 +11989,14 @@ var ModuleCoordinator = function () {
 
     _classCallCheck(this, ModuleCoordinator);
 
-    this.userId = userInfo.id;
-    this.username = userInfo.name;
+    this.userInfo = JSON.parse(JSON.stringify(userInfo));
     this.searchBox = new SearchBox(modulePrefix);
     this.widgetContainer = new WidgetContainer(modulePrefix);
-    this.userTrackList = new TrackList(modulePrefix, this.userId);
-    this.fullTrackList = new TrackList(modulePrefix, this.userId, false); // non-rearrageable
+    this.userTrackList = new TrackList(modulePrefix, this.userInfo.id);
+
+    // non-rearrageable
+    this.fullTrackList = new TrackList(modulePrefix, this.userInfo.id, false);
+
     this.searchResults = new SearchResults(modulePrefix);
     this.ajax = {};
 
@@ -11991,7 +12007,7 @@ var ModuleCoordinator = function () {
 
     this.ajax.trackSearch = new Ajax('https://api.spotify.com/v1/search', { type: 'track' });
 
-    this.ajax.setUserTracks = new Ajax(serverUrl + '/setUserTracks', { user: { id: this.userId, name: this.username } });
+    this.ajax.setUserTracks = new Ajax(serverUrl + '/setUserTracks', { user: { id: this.userInfo.id, name: this.userInfo.name } });
 
     this.ajax.getTrackList = new Ajax(serverUrl + '/getTrackList');
 
@@ -12133,7 +12149,7 @@ var ModuleCoordinator = function () {
     key: 'addTrack',
     value: function addTrack(trackInfo) {
       // Add user credentials to track
-      trackInfo.user = { id: this.userId, name: this.username }; // eslint-disable-line no-param-reassign, max-len
+      trackInfo.user = { id: this.userInfo.id, name: this.userInfo.name }; // eslint-disable-line no-param-reassign, max-len
       this.userTrackList.addTrack(trackInfo);
       this.submitTracks();
     }
@@ -12149,25 +12165,18 @@ var ModuleCoordinator = function () {
     key: 'submitTracks',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3() {
-        var tracks, outcome;
+        var tracks;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
                 tracks = this.userTrackList.getTracks();
-                _context3.next = 3;
-                return this.ajax.setUserTracks.post({ tracks: tracks });
 
-              case 3:
-                outcome = _context3.sent;
+                // This will trigger a playlist_update
 
-                if (outcome.error) {
-                  this.widgetContainer.displayInfo(outcome.error, true);
-                } else {
-                  // await this.loadTracks();
-                }
+                this.socket.emit('user_playlist_update', { user: { id: this.userInfo.id, name: this.userInfo.name }, tracks: tracks });
 
-              case 5:
+              case 2:
               case 'end':
                 return _context3.stop();
             }
@@ -12184,6 +12193,9 @@ var ModuleCoordinator = function () {
 
     /**
      * Loads tracks form the server
+     * Usually it will be called with the preloadedTracks as a response from
+     * a server socket event. But it may be called without it in situations such
+     * as when the widget is initiated
      * @method loadTracks
      * @param {Array} preloadedTracks
      * @return {tracks}
@@ -12221,7 +12233,7 @@ var ModuleCoordinator = function () {
                 assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
 
                 userTracks = loadedTracks.filter(function (t) {
-                  return t.user.id === _this3.userId;
+                  return t.user.id === _this3.userInfo.id;
                 });
 
                 this.userTrackList.setTracks(userTracks);
