@@ -8291,7 +8291,7 @@ module.exports = function(fn, that, length){
 
 var require$$1$4 = (_ctx && typeof _ctx === 'object' && 'default' in _ctx ? _ctx['default'] : _ctx);
 
-var _task = __commonjs(function (module, exports, global) {
+var _task = __commonjs(function (module) {
 var ctx                = require$$1$4
   , invoke             = require$$4$2
   , html               = require$$0$9
@@ -8684,7 +8684,7 @@ module.exports = function(it, Constructor, name, forbiddenField){
 
 var require$$11$1 = (_anInstance && typeof _anInstance === 'object' && 'default' in _anInstance ? _anInstance['default'] : _anInstance);
 
-var _export = __commonjs(function (module, exports) {
+var _export = __commonjs(function (module) {
 var global    = require$$29
   , core      = require$$0$4
   , ctx       = require$$1$4
@@ -8756,7 +8756,7 @@ module.exports = true;
 
 var require$$1$11 = (_library && typeof _library === 'object' && 'default' in _library ? _library['default'] : _library);
 
-var es6_promise = __commonjs(function (module, exports, global) {
+var es6_promise = __commonjs(function (module) {
 'use strict';
 var LIBRARY            = require$$1$11
   , global             = require$$29
@@ -11643,7 +11643,7 @@ var Ajax = function () {
   _createClass(Ajax, [{
     key: 'get',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
+      var _ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
         var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
         var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
         var requestUrl, requestConfig;
@@ -11670,7 +11670,7 @@ var Ajax = function () {
       }));
 
       function get(_x2, _x3) {
-        return ref.apply(this, arguments);
+        return _ref.apply(this, arguments);
       }
 
       return get;
@@ -11688,7 +11688,7 @@ var Ajax = function () {
   }, {
     key: 'post',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2() {
+      var _ref2 = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2() {
         var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
         var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
 
@@ -11806,7 +11806,7 @@ var Ajax = function () {
       }));
 
       function post(_x6, _x7) {
-        return ref.apply(this, arguments);
+        return _ref2.apply(this, arguments);
       }
 
       return post;
@@ -11823,7 +11823,7 @@ var Ajax = function () {
   }, {
     key: 'sendRequest',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(config) {
+      var _ref3 = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(config) {
         var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
         var response, content;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
@@ -11873,7 +11873,7 @@ var Ajax = function () {
       }));
 
       function sendRequest(_x10, _x11) {
-        return ref.apply(this, arguments);
+        return _ref3.apply(this, arguments);
       }
 
       return sendRequest;
@@ -12069,7 +12069,7 @@ var ModuleCoordinator = function () {
       })));
 
       this.searchBox.on('usertyping', function () {
-        var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(box, keyCode) {
+        var _ref2 = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(box, keyCode) {
           var arrowDownCode, arrowUpCode;
           return _regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
@@ -12093,7 +12093,7 @@ var ModuleCoordinator = function () {
         }));
 
         return function (_x, _x2) {
-          return ref.apply(this, arguments);
+          return _ref2.apply(this, arguments);
         };
       }());
 
@@ -12162,7 +12162,7 @@ var ModuleCoordinator = function () {
   }, {
     key: 'submitTracks',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3() {
+      var _ref3 = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3() {
         var tracks;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -12183,7 +12183,7 @@ var ModuleCoordinator = function () {
       }));
 
       function submitTracks() {
-        return ref.apply(this, arguments);
+        return _ref3.apply(this, arguments);
       }
 
       return submitTracks;
@@ -12202,7 +12202,7 @@ var ModuleCoordinator = function () {
   }, {
     key: 'loadTracks',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(preloadedTracks) {
+      var _ref4 = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(preloadedTracks) {
         var _this3 = this;
 
         var loadedTracks, userTracks;
@@ -12246,7 +12246,7 @@ var ModuleCoordinator = function () {
       }));
 
       function loadTracks(_x4) {
-        return ref.apply(this, arguments);
+        return _ref4.apply(this, arguments);
       }
 
       return loadTracks;
@@ -12262,7 +12262,7 @@ var ModuleCoordinator = function () {
   }, {
     key: 'searchTrack',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(searchString) {
+      var _ref5 = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(searchString) {
         var tracksFound, res;
         return _regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
@@ -12306,7 +12306,7 @@ var ModuleCoordinator = function () {
       }));
 
       function searchTrack(_x5) {
-        return ref.apply(this, arguments);
+        return _ref5.apply(this, arguments);
       }
 
       return searchTrack;
