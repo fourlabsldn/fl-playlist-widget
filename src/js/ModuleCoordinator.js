@@ -123,8 +123,12 @@ export default class ModuleCoordinator {
    */
   async submitTracks() {
     const tracks = this.userTrackList.getTracks();
-    await this.ajax.setUserTracks.post({ tracks });
-    await this.loadTracks();
+    const outcome = await this.ajax.setUserTracks.post({ tracks });
+    if (outcome.error) {
+      this.widgetContainer.displayInfo(outcome.error, true);
+    } else {
+      await this.loadTracks();
+    }
   }
 
   /**

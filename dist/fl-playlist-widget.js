@@ -4182,6 +4182,8 @@ var SearchBox = function (_ViewController) {
   return SearchBox;
 }(ViewController);
 
+var INFO_DISPLAY_DURATION = 4000;
+
 var WidgetContainer = function (_ViewController) {
   _inherits(WidgetContainer, _ViewController);
 
@@ -4336,7 +4338,7 @@ var WidgetContainer = function (_ViewController) {
       var _this2 = this;
 
       var error = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-      var duration = arguments.length <= 2 || arguments[2] === undefined ? 2000 : arguments[2];
+      var duration = arguments.length <= 2 || arguments[2] === undefined ? INFO_DISPLAY_DURATION : arguments[2];
 
       var errorClass = this.cssPrefix + '-info--error';
       var successClass = this.cssPrefix + '-info--success';
@@ -4890,7 +4892,7 @@ var ModuleCoordinator = function () {
     key: 'submitTracks',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3() {
-        var tracks;
+        var tracks, outcome;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
@@ -4900,10 +4902,22 @@ var ModuleCoordinator = function () {
                 return this.ajax.setUserTracks.post({ tracks: tracks });
 
               case 3:
-                _context3.next = 5;
+                outcome = _context3.sent;
+
+                if (!outcome.error) {
+                  _context3.next = 8;
+                  break;
+                }
+
+                this.widgetContainer.displayInfo(outcome.error, true);
+                _context3.next = 10;
+                break;
+
+              case 8:
+                _context3.next = 10;
                 return this.loadTracks();
 
-              case 5:
+              case 10:
               case 'end':
                 return _context3.stop();
             }

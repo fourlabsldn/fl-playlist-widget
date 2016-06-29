@@ -1,6 +1,7 @@
 import ViewController from './ViewController';
 import assert from 'fl-assert';
 
+const INFO_DISPLAY_DURATION = 4000;
 export default class WidgetContainer extends ViewController {
 
   constructor(modulePrefix) {
@@ -128,7 +129,7 @@ export default class WidgetContainer extends ViewController {
    * @param  {Int} duration
    * @return {void}
    */
-  displayInfo(message, error = false, duration = 2000) {
+  displayInfo(message, error = false, duration = INFO_DISPLAY_DURATION) {
     const errorClass = `${this.cssPrefix}-info--error`;
     const successClass = `${this.cssPrefix}-info--success`;
     this.html.info.classList.remove(errorClass, successClass);
