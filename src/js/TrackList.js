@@ -61,7 +61,7 @@ export default class TrackList extends ViewController {
     newTrack.on('dragstart', (track, e) => {
       e.dataTransfer.setDragImage(document.createElement('img'), 0, 0);
       // Rearrange all tracks except the one playing
-      const allTracks = this.tracks.filter(t => !t.info.playing).map(t => t.getContainer());
+      const allTracks = this.tracks.filter(t => !t.info.used).map(t => t.getContainer());
       const trackEl = track.getContainer();
 
       trackReorderDrag(e, trackEl, allTracks)
