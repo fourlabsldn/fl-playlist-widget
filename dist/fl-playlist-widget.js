@@ -4368,13 +4368,23 @@ var Ajax = function () {
     this.defaultParameters = defaultParameters;
   }
 
+  /**
+   * Send a GET request
+   * @public
+   * @method get
+   * @param  {Object} params - Will be sent with the request together with this.defaultParameters
+   * @param  {String} url
+   * @return {Promise<Object>} The parsed JSON response
+   */
+
+
   _createClass(Ajax, [{
-    key: 'query',
+    key: 'get',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
         var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
         var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
-        var requestUrl, requestConfig, response, content;
+        var requestUrl, requestConfig;
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -4383,57 +4393,234 @@ var Ajax = function () {
                 requestUrl = this.addParametersToUrl(url, this.defaultParameters, params);
                 requestConfig = {
                   method: 'GET',
-                  cache: 'no-cache'
+                  cache: 'no-cache',
+                  redirect: 'follow',
+                  headers: new Headers({ 'Content-Type': 'application/json' })
                 };
-                // credentials: 'include',
-                response = void 0;
-                _context.prev = 4;
-                _context.next = 7;
-                return fetch(requestUrl, requestConfig);
+                return _context.abrupt('return', this.sendRequest(requestConfig, requestUrl));
 
-              case 7:
-                response = _context.sent;
-                _context.next = 13;
-                break;
-
-              case 10:
-                _context.prev = 10;
-                _context.t0 = _context['catch'](4);
-                throw new Error('Error connecting to server.');
-
-              case 13:
-                _context.prev = 13;
-                _context.next = 16;
-                return response.json();
-
-              case 16:
-                content = _context.sent;
-                return _context.abrupt('return', content);
-
-              case 20:
-                _context.prev = 20;
-                _context.t1 = _context['catch'](13);
-                throw new Error('Invalid server response.');
-
-              case 23:
+              case 4:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[4, 10], [13, 20]]);
+        }, _callee, this);
       }));
 
-      function query(_x2, _x3) {
+      function get(_x2, _x3) {
         return ref.apply(this, arguments);
       }
 
-      return query;
+      return get;
+    }()
+
+    /**
+     * Send a POST request
+     * @public
+     * @method post
+     * @param  {Object} params - Will be sent with the request together with this.defaultParameters
+     * @param  {String} url
+     * @return {Promise<Object>} The parsed JSON response
+     */
+
+  }, {
+    key: 'post',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2() {
+        var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+        var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
+
+        var requestBody, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, key, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _key, config;
+
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                // Create requestBody with content from params and this.defaultParameters
+                requestBody = {};
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context2.prev = 4;
+
+                for (_iterator = Object.keys(params)[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  key = _step.value;
+
+                  requestBody[key] = params[key];
+                }
+                _context2.next = 12;
+                break;
+
+              case 8:
+                _context2.prev = 8;
+                _context2.t0 = _context2['catch'](4);
+                _didIteratorError = true;
+                _iteratorError = _context2.t0;
+
+              case 12:
+                _context2.prev = 12;
+                _context2.prev = 13;
+
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
+                }
+
+              case 15:
+                _context2.prev = 15;
+
+                if (!_didIteratorError) {
+                  _context2.next = 18;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 18:
+                return _context2.finish(15);
+
+              case 19:
+                return _context2.finish(12);
+
+              case 20:
+                _iteratorNormalCompletion2 = true;
+                _didIteratorError2 = false;
+                _iteratorError2 = undefined;
+                _context2.prev = 23;
+                for (_iterator2 = Object.keys(this.defaultParameters)[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                  _key = _step2.value;
+
+                  requestBody[_key] = this.defaultParameters[_key];
+                }
+
+                _context2.next = 31;
+                break;
+
+              case 27:
+                _context2.prev = 27;
+                _context2.t1 = _context2['catch'](23);
+                _didIteratorError2 = true;
+                _iteratorError2 = _context2.t1;
+
+              case 31:
+                _context2.prev = 31;
+                _context2.prev = 32;
+
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                  _iterator2.return();
+                }
+
+              case 34:
+                _context2.prev = 34;
+
+                if (!_didIteratorError2) {
+                  _context2.next = 37;
+                  break;
+                }
+
+                throw _iteratorError2;
+
+              case 37:
+                return _context2.finish(34);
+
+              case 38:
+                return _context2.finish(31);
+
+              case 39:
+                config = {
+                  method: 'POST',
+                  redirect: 'follow',
+                  mode: 'cors',
+                  headers: new Headers({ 'Content-Type': 'application/json' }),
+                  body: JSON.stringify({ requestBody: requestBody })
+                };
+                return _context2.abrupt('return', this.sendRequest(config, url));
+
+              case 41:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this, [[4, 8, 12, 20], [13,, 15, 19], [23, 27, 31, 39], [32,, 34, 38]]);
+      }));
+
+      function post(_x6, _x7) {
+        return ref.apply(this, arguments);
+      }
+
+      return post;
+    }()
+
+    /**
+     * @private
+     * @method sendRequest
+     * @param  {Object} config
+     * @param  {String} url
+     * @return {Promise<Object>} The parsed JSON response
+     */
+
+  }, {
+    key: 'sendRequest',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(config) {
+        var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
+        var response, content;
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                response = void 0;
+                _context3.prev = 1;
+                _context3.next = 4;
+                return fetch(url, config);
+
+              case 4:
+                response = _context3.sent;
+                _context3.next = 10;
+                break;
+
+              case 7:
+                _context3.prev = 7;
+                _context3.t0 = _context3['catch'](1);
+                throw new Error('Error connecting to server.');
+
+              case 10:
+                content = void 0;
+                _context3.prev = 11;
+                _context3.next = 14;
+                return response.json();
+
+              case 14:
+                content = _context3.sent;
+                _context3.next = 20;
+                break;
+
+              case 17:
+                _context3.prev = 17;
+                _context3.t1 = _context3['catch'](11);
+                throw new Error('Invalid server response.');
+
+              case 20:
+                return _context3.abrupt('return', content);
+
+              case 21:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this, [[1, 7], [11, 17]]);
+      }));
+
+      function sendRequest(_x10, _x11) {
+        return ref.apply(this, arguments);
+      }
+
+      return sendRequest;
     }()
 
     /**
      * Adds parameters as GET string parameters to a prepared URL
      * @private
-     * @method _addParametersToUrl
+     * @method addParametersToUrl
      * @param  {String} url
      * @param  {Object} params
      * @return {String} The full URL with parameters
@@ -4447,26 +4634,26 @@ var Ajax = function () {
 
       var getParams = [];
 
-      for (var _len = arguments.length, paramObjects = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        paramObjects[_key - 1] = arguments[_key];
+      for (var _len = arguments.length, paramObjects = Array(_len > 1 ? _len - 1 : 0), _key2 = 1; _key2 < _len; _key2++) {
+        paramObjects[_key2 - 1] = arguments[_key2];
       }
 
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator = paramObjects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var params = _step.value;
+        for (var _iterator3 = paramObjects[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var params = _step3.value;
 
           var keys = Object.keys(params);
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
+          var _iteratorNormalCompletion4 = true;
+          var _didIteratorError4 = false;
+          var _iteratorError4 = undefined;
 
           try {
-            for (var _iterator2 = keys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var key = _step2.value;
+            for (var _iterator4 = keys[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+              var key = _step4.value;
 
               var value = params[key] !== undefined && params[key] !== null ? params[key].toString() : '';
               var encodedKey = encodeURIComponent(key);
@@ -4474,31 +4661,31 @@ var Ajax = function () {
               getParams.push(encodedKey + '=' + encodedValue);
             }
           } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
+              if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
               }
             } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
+              if (_didIteratorError4) {
+                throw _iteratorError4;
               }
             }
           }
         }
       } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
           }
         } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
+          if (_didIteratorError3) {
+            throw _iteratorError3;
           }
         }
       }
@@ -4710,7 +4897,7 @@ var ModuleCoordinator = function () {
               case 0:
                 tracks = this.userTrackList.getTracks();
                 _context3.next = 3;
-                return this.ajax.setUserTracks.query({ tracks: tracks }, 'POST');
+                return this.ajax.setUserTracks.post({ tracks: tracks });
 
               case 3:
                 _context3.next = 5;
@@ -4749,7 +4936,7 @@ var ModuleCoordinator = function () {
             switch (_context4.prev = _context4.next) {
               case 0:
                 _context4.next = 2;
-                return this.ajax.getTrackList.query();
+                return this.ajax.getTrackList.get();
 
               case 2:
                 loadedTracks = _context4.sent;
@@ -4806,7 +4993,7 @@ var ModuleCoordinator = function () {
                 tracksFound = null;
                 _context5.prev = 3;
                 _context5.next = 6;
-                return this.ajax.trackSearch.query({ q: searchString });
+                return this.ajax.trackSearch.get({ q: searchString });
 
               case 6:
                 res = _context5.sent;

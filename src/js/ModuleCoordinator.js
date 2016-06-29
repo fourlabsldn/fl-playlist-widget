@@ -123,7 +123,7 @@ export default class ModuleCoordinator {
    */
   async submitTracks() {
     const tracks = this.userTrackList.getTracks();
-    await this.ajax.setUserTracks.query({ tracks }, 'POST');
+    await this.ajax.setUserTracks.post({ tracks });
     await this.loadTracks();
   }
 
@@ -133,7 +133,7 @@ export default class ModuleCoordinator {
    * @return {tracks}
    */
   async loadTracks() {
-    const loadedTracks = await this.ajax.getTrackList.query();
+    const loadedTracks = await this.ajax.getTrackList.get();
 
     assert(Array.isArray(loadedTracks), 'Invalid tracks object loaded from server.');
 
@@ -155,7 +155,7 @@ export default class ModuleCoordinator {
     if (!searchString) { return null; }
     let tracksFound = null;
     try {
-      const res = await this.ajax.trackSearch.query({ q: searchString });
+      const res = await this.ajax.trackSearch.get({ q: searchString });
       tracksFound = res.tracks.items;
     } catch (e) {
       assert.warn(false, `Error searching tracks: ${e.message}`);
