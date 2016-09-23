@@ -72,7 +72,13 @@ export default class Track extends ViewController {
       this.playingSign = playingSign;
       playingSign.innerHTML = constants.playIcon;
       buttonsBar.appendChild(playingSign);
-    } else if (rearrageable && !info.used) {
+    } else if (info.used) {
+      const playedSign = document.createElement('button');
+      playedSign.classList.add(`${buttonsBarClass}-playedSign`);
+      this.playedSign = playedSign;
+      playedSign.innerHTML = 'played';
+      buttonsBar.appendChild(playedSign);
+    } else if (rearrageable) {
       const dragBtn = document.createElement('button');
       dragBtn.innerHTML = constants.dragIcon;
       dragBtn.setAttribute('draggable', 'true');
